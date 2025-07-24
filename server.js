@@ -3,6 +3,9 @@
  */
 
 require('dotenv').config()
+
+// Connect to the database or process.exit() if it's not possible
+require('./database')
 			
 const PROD_REGEX = /^(production|prod|staging|release|deploy)$/i
 const is_dev = !PROD_REGEX.test(process.env.NODE_ENV)
