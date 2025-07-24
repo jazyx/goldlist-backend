@@ -25,6 +25,9 @@ if (is_dev) {
   server.use(require('cors')())
 }
 
+server.use(express.urlencoded({ extended: false }));
+server.use(express.json());
+
 const cookieOptions = {
   name: "session",
   keys: [ COOKIE_SECRET ],

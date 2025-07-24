@@ -5,7 +5,7 @@
 
 const router = require('express').Router()
 const { checkPass } = require('./middleware')
-const { ping } = require('./controllers')
+const { getUserData } = require('./controllers')
 
 
 // Ensure that the call came from a client that has already
@@ -13,7 +13,7 @@ const { ping } = require('./controllers')
 router.use(checkPass)
 
 
-router.get("/ping", ping)
+router.post("/getUserData", getUserData)
 
 
 module.exports = router

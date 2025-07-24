@@ -3,9 +3,9 @@
  */
 
 
-const ping = require('./ping')
+const getUserData = require('./getUserData')
 
 
 module.exports = {
-  ping
+  getUserData
 }
