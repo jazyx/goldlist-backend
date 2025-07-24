@@ -18,6 +18,12 @@ const serveCookie = (req, res, next) => {
     
     // Create a token to record the origin that was requested...
     const pass = getToken(regex)
+
+    // console.log("pass:", pass) // will be something like...
+    // eyJhbGciOiJIUzI1NiJ9.Xmh0dHBzPzovL2xvY2FsaG9zdDozMDAwLw.JxY0tdcIptUaU_wr2DoaFwIFU5j0EXByJAzBF5IyNvA
+    // ...which decodes as:
+    // ^https?://localhost:3000/
+
     // ... and serve it as session cookie.
     req.session.pass = pass
 

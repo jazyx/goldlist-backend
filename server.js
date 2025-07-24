@@ -11,17 +11,12 @@ process.env.IS_DEV = is_dev
 const express = require('express')
 const cookieSession = require('cookie-session')
 const { serveCookie } = require('./middleware')
+const { userCookie } = require('./middleware')
 const router = require('./router')
 
 const PORT = process.env.PORT || 3000
 const COOKIE_SECRET = process.env.COOKIE_SECRET || "string needed"
 
-const cookieOptions = {
-  name: "pass",
-  keys: [ COOKIE_SECRET ],
-  httpOnly: true,
-  sameSite: true
-}
 
 const server = express()
 if (is_dev) {
@@ -29,9 +24,17 @@ if (is_dev) {
   console.log("🤚USING CORS FOR DEVELOPMENT")
   server.use(require('cors')())
 }
+
+const cookieOptions = {
+  name: "session",
+  keys: [ COOKIE_SECRET ],
+  httpOnly: true,
+  sameSite: true
+}
 server.use(cookieSession(cookieOptions))
 
 server.use(serveCookie)
+server.use(userCookie)
 server.use(express.static('public'));
 server.use('/', router)
 
