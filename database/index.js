@@ -8,7 +8,7 @@ const MONGO_DB = process.env.MONGO_DB
 const mongoose = require("mongoose");
 const {
   User,
-  Phrases
+  Phrase
 } = require("./models")
 
 mongoose.set("strictQuery", true); // false by default > v6
@@ -29,7 +29,7 @@ mongoose
 const db = {
   mongoose,
   User,
-  Phrases
+  Phrase
 }
 
 

@@ -5,15 +5,20 @@
 const { Schema, model } = require('mongoose')
 
 const schema = new Schema({
-  user_id: { type: Schema.Types.ObjectId },
+  user_id: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  page:    { type: Number, default: 0 },
   text:    { type: String, required: true },
   comment: { type: String },
-  tatoeba: { type: String },
-  wiktionary: { type: String },
-  date_1:  { type: Date },
-  date_2:  { type: Date },
-  date_3:  { type: Date },
-  date_4:  { type: Date }
+  // tatoeba: { type: String },
+  // wiktionary: { type: String },
+  created: { type: Date, default: new Date() },
+  rev_1:   { type: String },
+  rev_2:   { type: String },
+  rev_3:   { type: String }
 });
 
 const Phrase = model("Phrase", schema);

@@ -3,9 +3,13 @@
  */
 
 
-const getUserData = require('./getUserData')
+const {
+  getUserData,
+  addPhrase
+} = require('./userMethods')
 
 
 module.exports = {
-  getUserData
+  getUserData,
+  addPhrase
 }
