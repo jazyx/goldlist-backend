@@ -6,10 +6,14 @@ require('dotenv').config()
 
 // Connect to the database or process.exit() if it's not possible
 require('./database')
+
+const path = require('path');
+const PUBLIC = path.join(__dirname, 'public')
 			
 const PROD_REGEX = /^(production|prod|staging|release|deploy)$/i
 const is_dev = !PROD_REGEX.test(process.env.NODE_ENV)
 process.env.IS_DEV = is_dev
+
 
 const express = require('express')
 const cookieSession = require('cookie-session')
@@ -41,7 +45,7 @@ server.use(cookieSession(cookieOptions))
 
 server.use(serveCookie)
 server.use(userCookie)
-server.use(express.static('public'));
+server.use(express.static(PUBLIC));
 server.use('/', router)
 
 server.listen(PORT, () => {

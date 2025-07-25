@@ -9,7 +9,7 @@ const schema = new Schema({
   email: { type: String },
   hash: { type: String },
   start_date: { type: Date, required: true },
-  last_date: { type: Date }
+  last_date: { type: Date, required: true }
 });
 
 const User = model("User", schema);
