@@ -59,13 +59,14 @@ const REMAIN = 7
 
 function getUserData(req, res) {
   const last_access = new Date()
-  const user_id = req.session?.user_id
+  const user_id = req.session?.user_id || ""
   const { user_name, email, password } = req.body
 
+  // Ensure `guest` does not accumulate extra user_ids
   const guest = `${user_name.replace(`_${user_id}`,"")}_${user_id}`
+
   let status = 0
   let message = {}
-  let user
 
   // Allow user to log in with either username or email
   const promises = [
@@ -161,11 +162,12 @@ function getUserData(req, res) {
 
   function getActiveList(user) {
     const { _id: user_id, lists: index } = user
+    const selection = ["index", "created" ]
 
     return new Promise(( resolve, reject ) => {
       const query = { user_id, index }
 
-      List.findOne(query)
+      List.findOne(query).select(selection)
         .then(list => resolve({ user, list }))
         .catch(treatError)
 
@@ -173,18 +175,20 @@ function getUserData(req, res) {
   }
 
 
-  function getActiveListPhrases({ user, list }) {
-    const { _id: list_id, index } = list
+  function getActiveListPhrases({ user, list }) {    
+    const { _id: list_id, index, created } = list
+    const selection = ["text", "hint", "retained" ]
 
     return new Promise(( resolve, reject ) => {
       const query = { lists: { $elemMatch: { $eq: list_id } } }
    
-      Phrase.find(query)
+      Phrase.find(query).select(selection)
         .then(treatPhrases)
 
       function treatPhrases(phrases) {
         const list = {
           index,
+          created,
           phrases
         }
         resolve({ user, list })
@@ -193,41 +197,47 @@ function getUserData(req, res) {
   }
 
 
-  /**
-   * Finds lists which:
-   * 1. Have more than 7 remains
-   * 2. Are older than today - List.reviews * DELAY days
-   * @returns
-   */
   function getReviewLists({ user, list }) {
     const { _id: user_id } = user
-    return new Promise(( resolve, reject ) => {
-      const now = new Date()
 
-      List.aggregate([
+    // Create $expr to find list which...
+    // 1. Are older than (today - List.reviews * DELAY days)
+    const now = new Date()
+    const $expr = {
+      $lt: [
+        "$created",
         {
-          $match: {
-            user_id,
-            remain: { $gt: REMAIN },
-            $expr: {
-              $lt: [
-                "$created",
-                {
-                  $dateSubtract: {
-                    startDate: now,
-                    unit: "day",
-                    amount: { $multiply: ["$reviews", DELAY] },
-                  }
-                }
-              ]
-            }
+          $dateSubtract: {
+            startDate: now,
+            unit: "day",
+            amount: { $multiply: ["$reviews", DELAY] },
           }
         }
+      ]
+    }
+    // 2. Contain more than REMAIN unretained phrases
+    const remain = { $gt: REMAIN }
+
+    const $match = {
+      user_id,
+      remain,
+      $expr
+    }
+    const $project = {
+      "index":   1,
+      "created": 1,
+      "reviews": 1,
+      "remain":  1
+    }
+
+    return new Promise(( resolve, reject ) => {
+      List.aggregate([
+        { $match },
+        { $project }
       ])
         .then(redos => {
           resolve({ user, list, redos })
         })
-
     })
   }
 
