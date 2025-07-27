@@ -6,7 +6,7 @@
  *   const query = { lists: { $elemMatch: { $eq: list._id } } }
  *   const selection = ["text", "hint", "retained" ]
  *   Phrase.find(query).select(selection)
- * 
+ *
  * (Also includes _id.)
  */
 

@@ -13,7 +13,7 @@ const userCookie = (req, res, next) => {
   let user_id = req.session?.user_id
 
   if (!user_id) {
-    user_id = uuid()
+    user_id = "One" // uuid()
     req.session.user_id = user_id
   }
 
