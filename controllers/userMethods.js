@@ -12,25 +12,39 @@
  *   7. Responds with the JSON message, or an error JSON
  *      { 
  *        "user": {
- *          "_id": "6885d12a13e8225e32723403",
+ *          "_id": "6885dff18637f1dff16ff4d7",
  *          "user_name": "User_One",
- *          "start_date": "2025-07-17T00:00:00.000Z",
- *          "last_access": "2025-07-27T07:18:31.231Z"
+ *          "lists": 3,
+ *          "knots": 10000,
+ *          "last_access": "2025-07-27T09:18:28.715Z"
  *        },
  *        "list": {
  *          "index": 3,
- *          "phrases": [ <20 {entries}> ]
+ *          "phrases": [
+ *            "Great Britain",
+ *            "England",
+ *            "Scotland",
+ *            "+ 17 more items"
+ *          ]
  *        },
  *        "redos": [
  *          {
- *            "_id": "6885d12a13e8225e32723408",
- *            "user_id": "6885d12a13e8225e32723403",
- *            "index": 2,
- *            "created": "2025-07-23T00:00:00.000Z",
- *            "reviews": 1,
- *            "remain": 21,
- *            "__v": 0
- *          }
+ *            "list": {
+ *              "_id": "6885dff18637f1dff16ff4da",
+ *              "user_id": "6885dff18637f1dff16ff4d7",
+ *              "index": 0,
+ *              "created": "2025-07-17T00:00:00.000Z",
+ *              "reviews": 3,
+ *              "remain": 10,
+ *              "__v": 0
+ *            },
+ *            "phrases": [
+ *              "one",
+ *              "two",
+ *              "three",
+ *              "+ 17 more items"
+ *            ]
+ *          }, ...
  *        ]
  *      }
  *
@@ -39,7 +53,8 @@
  */
 
 const { User, List, Phrase } = require('../database')
-const DELAY = 4
+const DELAY = 3
+const REMAIN = 7
 
 
 function getUserData(req, res) {
@@ -69,8 +84,10 @@ function getUserData(req, res) {
 
 
   function findUser(query) {
+    const selection = [ "user_name", "lists", "knots" ]
+
     return new Promise(( resolve, reject ) => {
-      User.findOne(query)
+      User.findOne(query).select(selection)
         .then(checkPassword)
         .then(createUser)
         .catch(reject)
@@ -122,10 +139,10 @@ function getUserData(req, res) {
   // or GUEST+UUID has been found or created.
   function treatSuccess(user) {
     updateLastAccess(user)
-      // .then(addDummyPhrases)
       .then(getActiveList)
+      .then(getActiveListPhrases)
       .then(getReviewLists)
-      // .then(getPageOfPhrases)
+      .then(getReviewListPhrases)
       .then(prepareMessage)
       .catch(treatError)
       .finally(proceed)
@@ -142,52 +159,27 @@ function getUserData(req, res) {
   }
 
 
-  function addDummyPhrases(user) {
-    // For testing, add some dummy phrases for page 0
-    return new Promise(( resolve, reject ) => {
-      const { _id: user_id, page } = user
-
-      const phrases = [
-        { text: "дом",     comment: "house" },
-        { text: "вошь",    comment: "louse" },
-        { text: "мышь",    comment: "mouse" },
-        { text: "куст",    comment: "bush"  },
-        { text: "фонтан",  comment: "gush"  },
-        { text: "тишина",  comment: "hush"  },
-        { text: "пышный",  comment: "lush"  },
-        { text: "каша",    comment: "mush"  },
-        { text: "толкать", comment: "push"  },
-        { text: "спешка",  comment: "rush"  }
-      ]
-
-      const promises = phrases.map( phrase => {
-        return new Promise(( resolve, reject ) => {
-          new Phrase({ ...phrase, user_id, page })
-            .save()
-            .then(resolve)
-            .catch(reject)
-        })
-      })
-
-      Promise.all(promises)
-        .then(resolve(user))
-        .catch(reject)
-    })
-  }
-
-
   function getActiveList(user) {
     const { _id: user_id, lists: index } = user
 
     return new Promise(( resolve, reject ) => {
-      const filter = {
-        $and: [
-          { user_id },
-          { lists: { $elemMatch: { $eq: index } } }
-        ]
-      }
+      const query = { user_id, index }
 
-      Phrase.find(filter)
+      List.findOne(query)
+        .then(list => resolve({ user, list }))
+        .catch(treatError)
+
+    })
+  }
+
+
+  function getActiveListPhrases({ user, list }) {
+    const { _id: list_id, index } = list
+
+    return new Promise(( resolve, reject ) => {
+      const query = { lists: { $elemMatch: { $eq: list_id } } }
+   
+      Phrase.find(query)
         .then(treatPhrases)
 
       function treatPhrases(phrases) {
@@ -204,7 +196,7 @@ function getUserData(req, res) {
   /**
    * Finds lists which:
    * 1. Have more than 7 remains
-   * 2. Are older than today - List.reviews * delay
+   * 2. Are older than today - List.reviews * DELAY days
    * @returns
    */
   function getReviewLists({ user, list }) {
@@ -212,12 +204,11 @@ function getUserData(req, res) {
     return new Promise(( resolve, reject ) => {
       const now = new Date()
 
-
       List.aggregate([
         {
           $match: {
             user_id,
-            remain: { $gt: 7 },
+            remain: { $gt: REMAIN },
             $expr: {
               $lt: [
                 "$created",
@@ -234,7 +225,6 @@ function getUserData(req, res) {
         }
       ])
         .then(redos => {
-          console.log("lists", JSON.stringify(redos, null, '  '));
           resolve({ user, list, redos })
         })
 
@@ -242,39 +232,28 @@ function getUserData(req, res) {
   }
 
 
-  function getPageOfPhrases(user) {
-    return new Promise(( resolve, reject ) => {
-      const filter = {
-        $and: [
-          { user_id: user._id },
-          { lists: { $elemMatch: { $eq: user.lists } } }
-        ]
-      }
+  function getReviewListPhrases({ user, list, redos }) {
+    const selection = ["text", "hint", "retained" ]
 
-      Phrase.find(filter)
-        .then(phrases => resolve({ user, phrases }))
-        .catch(reject)
+    const promises = redos.map( list => {
+      return new Promise(( resolve, reject ) => {
+        const query = { lists: { $elemMatch: { $eq: list._id } } }
+
+        Phrase.find(query).select(selection)
+          .then(phrases => resolve({ list, phrases }))
+      })
+    })
+
+    return new Promise(( resolve, reject ) => {
+      Promise.all(promises)
+        .then(redos => resolve({ user, list, redos }))
     })
   }
 
 
   function prepareMessage({ user, list, redos }) {
-    const {
-      _id,
-      user_name,
-      email,
-      start_date,
-      last_access
-    } = user
-
     Object.assign(message, {
-      user: {
-        _id,
-        user_name,
-        email,
-        start_date,
-        last_access
-      },
+      user,
       list,
       redos
     })
