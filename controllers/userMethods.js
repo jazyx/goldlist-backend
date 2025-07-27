@@ -1,6 +1,6 @@
 /**
  * backend/controllers/userMethods.js
- * 
+ *
  * getUserData:
  *   1. Checks if a User record exists for user_name/email +
  *   password, or failing that user_name+user_id. If not...
@@ -10,23 +10,46 @@
  *   5. Retrieves dummy phrases for current User
  *   6. Generates a JSON message with User and Phrase data
  *   7. Responds with the JSON message, or an error JSON
+ *      { 
+ *        "user": {
+ *          "_id": "6885d12a13e8225e32723403",
+ *          "user_name": "User_One",
+ *          "start_date": "2025-07-17T00:00:00.000Z",
+ *          "last_access": "2025-07-27T07:18:31.231Z"
+ *        },
+ *        "list": {
+ *          "index": 3,
+ *          "phrases": [ <20 {entries}> ]
+ *        },
+ *        "redos": [
+ *          {
+ *            "_id": "6885d12a13e8225e32723408",
+ *            "user_id": "6885d12a13e8225e32723403",
+ *            "index": 2,
+ *            "created": "2025-07-23T00:00:00.000Z",
+ *            "reviews": 1,
+ *            "remain": 21,
+ *            "__v": 0
+ *          }
+ *        ]
+ *      }
  *
  * addPhrase:
  *   Does nothing yet
  */
 
-const { User, Phrase } = require('../database')
+const { User, List, Phrase } = require('../database')
+const DELAY = 4
 
 
-
-function getUserData(req, res, next) {
+function getUserData(req, res) {
   const last_access = new Date()
   const user_id = req.session?.user_id
   const { user_name, email, password } = req.body
 
   const guest = `${user_name.replace(`_${user_id}`,"")}_${user_id}`
   let status = 0
-  let message = next instanceof Function ? {} : next
+  let message = {}
   let user
 
   // Allow user to log in with either username or email
@@ -100,7 +123,9 @@ function getUserData(req, res, next) {
   function treatSuccess(user) {
     updateLastAccess(user)
       // .then(addDummyPhrases)
-      .then(getPageOfPhrases)
+      .then(getActiveList)
+      .then(getReviewLists)
+      // .then(getPageOfPhrases)
       .then(prepareMessage)
       .catch(treatError)
       .finally(proceed)
@@ -151,11 +176,79 @@ function getUserData(req, res, next) {
   }
 
 
+  function getActiveList(user) {
+    const { _id: user_id, lists: index } = user
+
+    return new Promise(( resolve, reject ) => {
+      const filter = {
+        $and: [
+          { user_id },
+          { lists: { $elemMatch: { $eq: index } } }
+        ]
+      }
+
+      Phrase.find(filter)
+        .then(treatPhrases)
+
+      function treatPhrases(phrases) {
+        const list = {
+          index,
+          phrases
+        }
+        resolve({ user, list })
+      }
+    })
+  }
+
+
+  /**
+   * Finds lists which:
+   * 1. Have more than 7 remains
+   * 2. Are older than today - List.reviews * delay
+   * @returns
+   */
+  function getReviewLists({ user, list }) {
+    const { _id: user_id } = user
+    return new Promise(( resolve, reject ) => {
+      const now = new Date()
+
+
+      List.aggregate([
+        {
+          $match: {
+            user_id,
+            remain: { $gt: 7 },
+            $expr: {
+              $lt: [
+                "$created",
+                {
+                  $dateSubtract: {
+                    startDate: now,
+                    unit: "day",
+                    amount: { $multiply: ["$reviews", DELAY] },
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ])
+        .then(redos => {
+          console.log("lists", JSON.stringify(redos, null, '  '));
+          resolve({ user, list, redos })
+        })
+
+    })
+  }
+
+
   function getPageOfPhrases(user) {
     return new Promise(( resolve, reject ) => {
       const filter = {
-        user_id: user._id,
-        page: user.page
+        $and: [
+          { user_id: user._id },
+          { lists: { $elemMatch: { $eq: user.lists } } }
+        ]
       }
 
       Phrase.find(filter)
@@ -165,7 +258,7 @@ function getUserData(req, res, next) {
   }
 
 
-  function prepareMessage({ user, phrases }) { 
+  function prepareMessage({ user, list, redos }) {
     const {
       _id,
       user_name,
@@ -175,14 +268,15 @@ function getUserData(req, res, next) {
     } = user
 
     Object.assign(message, {
-      signed_in: true,
-      _id,
-      user_id,
-      user_name,
-      email,
-      start_date,
-      last_access,
-      phrases
+      user: {
+        _id,
+        user_name,
+        email,
+        start_date,
+        last_access
+      },
+      list,
+      redos
     })
   }
 

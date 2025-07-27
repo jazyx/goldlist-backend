@@ -1,24 +1,30 @@
 /**
- * server/database/models/user.js
+ * server/database/models/phrase.js
+ *
+ * To create an array of all Phrases in a given list for a given
+ * user:
+ *
+ *   const filter = {
+ *     user_id: <>,
+ *     lists: { $elemMatch: <> }
+ *   }
+ *   const select = ["text", "hint", "retained" ]
+ *   Phrase.find(filter).select(select)
  */
 
 const { Schema, model } = require('mongoose')
 
 const schema = new Schema({
-  user_id: {
+  user_id:  {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
-  page:    { type: Number, default: 0 },
-  text:    { type: String, required: true },
-  comment: { type: String },
-  // tatoeba: { type: String },
-  // wiktionary: { type: String },
-  created: { type: Date, default: new Date() },
-  rev_1:   { type: String },
-  rev_2:   { type: String },
-  rev_3:   { type: String }
+  lists:    { type: [Number], required: true },
+  text:     { type: String, required: true },
+  hint:     { type: String },
+  created:  { type: Date, default: new Date() },
+  retained: { type: Date }
 });
 
 const Phrase = model("Phrase", schema);

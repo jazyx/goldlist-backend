@@ -8,6 +8,7 @@ const MONGO_DB = process.env.MONGO_DB
 const mongoose = require("mongoose");
 const {
   User,
+  List,
   Phrase
 } = require("./models")
 
@@ -29,6 +30,7 @@ mongoose
 const db = {
   mongoose,
   User,
+  List,
   Phrase
 }
 
