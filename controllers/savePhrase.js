@@ -79,6 +79,7 @@ function savePhrase(req, res) {
           Phrase.countDocuments(query)
             .then(length => {
               data.length = length
+              data.list_id = list_id
               resolve(data)
             })
         }
@@ -93,10 +94,18 @@ function savePhrase(req, res) {
     { $set: { text, hint } },
     { new: true } // returns the updated document
   )
+    .then(treatUpdate)
     .then(treatSuccess)
     .catch(treatError)
     .finally(proceed)
 
+
+  function treatUpdate(phrase) {
+    const { _id, key, text, hint } = phrase
+    const data = { _id, key, text, hint }
+
+    return Promise.resolve(data)
+  }
 
 
   // Handle response

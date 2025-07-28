@@ -18,15 +18,18 @@
  *          "knots": 10000,
  *          "last_access": "2025-07-27T09:18:28.715Z"
  *        },
- *        "list": {
+ *        "lists": [{
+ *          "_id": "6885dff18637f1dff16fe3cb"
  *          "index": 3,
+ *          "remain": 21,
+ *          "length": 20
  *          "phrases": [
  *            "Great Britain",
  *            "England",
  *            "Scotland",
  *            "+ 17 more items"
  *          ]
- *        },
+ *        }, ...],
  *        "redos": [
  *          {
  *            "list": {
@@ -174,7 +177,6 @@ function getUserData(req, res) {
 
   function getActiveListPhrases({ user, list }) {    
     const { _id, index, created, remain } = list
-    console.log("remain:", remain)
     const selection = [ "text", "hint", "retained" ]
 
     return new Promise(( resolve, reject ) => {
@@ -185,21 +187,21 @@ function getUserData(req, res) {
         .catch(reject)
 
       function treatPhrases(phrases) {
-        const list = {
+        const lists = [{
           _id,
           index,
           created,
           length: phrases.length,
           remain,
           phrases
-        }
-        resolve({ user, list })
+        }]
+        resolve({ user, lists })
       }
     })
   }
 
 
-  function getReviewLists({ user, list }) {
+  function getReviewLists({ user, lists }) {
     const { _id: user_id } = user
 
     // Create $expr to find list which...
@@ -238,14 +240,14 @@ function getUserData(req, res) {
         { $project }
       ])
         .then(redos => {
-          resolve({ user, list, redos })
+          resolve({ user, lists, redos })
         })
         .catch(reject)
     })
   }
 
 
-  function getReviewListPhrases({ user, list, redos }) {
+  function getReviewListPhrases({ user, lists, redos }) {
     const selection = ["text", "hint", "retained" ]
 
     const promises = redos.map( list => {
@@ -260,16 +262,16 @@ function getUserData(req, res) {
 
     return new Promise(( resolve, reject ) => {
       Promise.all(promises)
-        .then(redos => resolve({ user, list, redos }))
+        .then(redos => resolve({ user, lists, redos }))
         .catch(reject)
     })
   }
 
 
-  function prepareMessage({ user, list, redos }) {
+  function prepareMessage({ user, lists, redos }) {
     Object.assign(message, {
       user,
-      list,
+      lists,
       redos
     })
   }
