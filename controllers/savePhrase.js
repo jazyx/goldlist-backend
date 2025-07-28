@@ -5,10 +5,14 @@
  * Creates a new Phrase record in the given list, if _id is a
  * number not a string id. Otherwise updates the current Phrase
  * record.
- * 
- * Responds with { _id, text, hint, old_id }, where `old_id` may
- * be the number used as the key for a new phrase, and _id is
- * always the _id of the Phrase record that was updated or created.
+ *
+ * Responds with { _id, text, hint, key, length }, where
+ * + _id is always the _id of the Phrase record that was updated *   or created.
+ * + `key` may be the number used as the key for a new phrase
+ * + length may be undefined, or the number of items in the List
+ *
+ * If a new Phrase is created for a given List, then the length
+ * of the list will be incremented by 1.
  */
 
 
@@ -33,21 +37,51 @@ function savePhrase(req, res) {
       .finally(proceed)
   }
 
-  function addPhrase({ list_id, _id: old_id, text, hint }) {
+  function addPhrase({ list_id, _id: key, text, hint }) {
     const created = new Date()
     // Convert string list_id to Object.Id
     list_id = new mongoose.Types.ObjectId(list_id)
     const lists = [ list_id ]
 
     return new Promise(( resolve, reject ) => {
-      new Phrase({ text, hint, created, lists })
-        .save()
-        .then(treatSuccess)
+      // Check if a phrase with this key already exists in
+      // this list
+      const query = {
+        lists: { $elemMatch: { $eq: list_id } },
+        key
+      }
+      Phrase.findOne(query)
+        .then(checkPhrase)
         .catch(reject)
-          
-      function treatSuccess(phrase) {
-        const { _id, text, hint } = phrase
-        resolve({ old_id, _id, text, hint })
+
+      function checkPhrase(phrase) {
+        if (phrase) {
+          // Pretend this existing phrase was just created
+          treatPhrase(phrase)
+
+        } else {
+          // Create a new phrase with the given key
+          new Phrase({ key, text, hint, created, lists })
+            .save()
+            .then(treatPhrase)
+            // .then(recountPhrases)
+            .catch(reject)
+        }
+
+        function treatPhrase(phrase) {
+          // Filter out fields that are not necessary
+          const { _id, key, text, hint } = phrase
+          const data = { key, _id, text, hint }
+
+          // Add the (new) length of the list
+          const query = { lists: { $elemMatch: { $eq: list_id } } }
+
+          Phrase.countDocuments(query)
+            .then(length => {
+              data.length = length
+              resolve(data)
+            })
+        }
       }
     })
   }
@@ -67,8 +101,7 @@ function savePhrase(req, res) {
 
   // Handle response
   function treatSuccess(phrase) {
-    const { _id, text, hint, old_id } = phrase
-    Object.assign(message, { _id, text, hint, old_id } )
+    Object.assign(message, phrase )
   }
 
 

@@ -18,6 +18,7 @@ const schema = new Schema({
               ref: "List",
               required: true
             }] },
+  key:      { type: Number, required: true},
   text:     { type: String, required: true },
   hint:     { type: String },
   created:  { type: Date, default: new Date() },

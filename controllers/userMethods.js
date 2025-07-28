@@ -159,7 +159,7 @@ function getUserData(req, res) {
 
   function getActiveList(user) {
     const { _id: user_id, lists: index } = user
-    const selection = ["index", "created" ]
+    const selection = ["index", "created", "remain" ]
 
     return new Promise(( resolve, reject ) => {
       const query = { user_id, index }
@@ -173,7 +173,8 @@ function getUserData(req, res) {
 
 
   function getActiveListPhrases({ user, list }) {    
-    const { _id, index, created } = list
+    const { _id, index, created, remain } = list
+    console.log("remain:", remain)
     const selection = [ "text", "hint", "retained" ]
 
     return new Promise(( resolve, reject ) => {
@@ -188,6 +189,8 @@ function getUserData(req, res) {
           _id,
           index,
           created,
+          length: phrases.length,
+          remain,
           phrases
         }
         resolve({ user, list })
