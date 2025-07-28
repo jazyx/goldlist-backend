@@ -43,8 +43,8 @@ function addList(req, res) {
     return new Promise(( resolve, reject ) => {
     User.findOneAndUpdate(query, update, refresh)
       .then(user => {
-        const { index, user_name } = user
-        console.log("Update user with index", JSON.stringify({ index, user_name }, null, '  '))
+        const { lists, user_name } = user
+        console.log("Update user with index", JSON.stringify({ lists, user_name }, null, '  '))
         
         resolve(data)
        })

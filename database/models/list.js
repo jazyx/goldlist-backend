@@ -45,6 +45,8 @@ const schema = new Schema({
   remain:  { type: Number, default: 21 }
 });
 
+schema.index({ user_id: 1, index: 1 }, { unique: true });
+
 const List = model("List", schema);
 
 module.exports = {

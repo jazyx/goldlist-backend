@@ -14,7 +14,7 @@ const { Schema, model } = require('mongoose')
 
 const schema = new Schema({
   user_id:     { type: String },
-  user_name:   { type: String, required: true },
+  user_name:   { type: String, required: true, unique: true },
   email:       { type: String },
   hash:        { type: String },
   start_date:  { type: Date, required: true },

@@ -10,7 +10,7 @@
  *   5. Retrieves dummy phrases for current User
  *   6. Generates a JSON message with User and Phrase data
  *   7. Responds with the JSON message, or an error JSON
- *      { 
+ *      {
  *        "user": {
  *          "_id": "6885dff18637f1dff16ff4d7",
  *          "user_name": "User_One",
@@ -53,8 +53,10 @@
  */
 
 const { User, List, Phrase } = require('../database')
+const { addList } = require('./addList')
 const DELAY = 3
 const REMAIN = 7
+
 
 
 function getUserData(req, res) {
@@ -141,6 +143,7 @@ function getUserData(req, res) {
   function treatSuccess(user) {
     updateLastAccess(user)
       .then(getActiveList)
+      .then(checkList)
       .then(getActiveListPhrases)
       .then(getReviewLists)
       .then(getReviewListPhrases)
@@ -175,13 +178,30 @@ function getUserData(req, res) {
   }
 
 
-  function getActiveListPhrases({ user, list }) {    
+  function checkList({ user, list }) {
+    return new Promise(( resolve, reject) => {
+      if (list) {
+        return resolve({ user, list })
+      }
+
+      // No active list was found. Create an empty one
+      const { _id, index } = user
+      const req = { body: { _id, index }}
+      const json = list => resolve({ user, list })
+      const res = { status: 0, json }
+
+      addList(req, res)
+    })
+  }
+
+
+  function getActiveListPhrases({ user, list }) {
     const { _id, index, created, remain } = list
     const selection = [ "text", "hint", "retained" ]
 
     return new Promise(( resolve, reject ) => {
       const query = { lists: { $elemMatch: { $eq: _id } } }
-   
+
       Phrase.find(query).select(selection)
         .then(treatPhrases)
         .catch(reject)
@@ -278,7 +298,8 @@ function getUserData(req, res) {
 
 
   function treatError(error) {
-    console.log("Error in getUserData:\n", req.body, error);
+    console.log("Error in getUserData:\n", JSON.stringify(error, null, '  '), "\nreq.body\n", JSON.stringify(req.body, null, '  '));
+
     status = 500 // Server error
     message.fail = error
   }
