@@ -71,7 +71,7 @@ function savePhrase(req, res) {
         function treatPhrase(phrase) {
           // Filter out fields that are not necessary
           const { _id, key, text, hint } = phrase
-          const data = { key, _id, text, hint }
+          const data = { list_id, key, _id, text, hint }
 
           // Add the (new) length of the list
           const query = { lists: { $elemMatch: { $eq: list_id } } }
@@ -102,7 +102,7 @@ function savePhrase(req, res) {
 
   function treatUpdate(phrase) {
     const { _id, key, text, hint } = phrase
-    const data = { _id, key, text, hint }
+    const data = { list_id, _id, key, text, hint }
 
     return Promise.resolve(data)
   }
