@@ -7,7 +7,8 @@ const router = require('express').Router()
 const { checkPass } = require('./middleware')
 const { 
   getUserData, 
-  savePhrase
+  savePhrase,
+  addList
 } = require('./controllers')
 
 
@@ -18,6 +19,7 @@ router.use(checkPass)
 
 router.post("/getUserData", getUserData)
 router.post("/savePhrase", savePhrase)
+router.post("/addList", addList)
 
 
 module.exports = router
