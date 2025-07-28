@@ -3,13 +3,11 @@
  */
 
 
-const {
-  getUserData,
-  addPhrase
-} = require('./userMethods')
+const { getUserData } = require('./userMethods')
+const { savePhrase } = require('./savePhrase')
 
 
 module.exports = {
   getUserData,
-  addPhrase
+  savePhrase
 }

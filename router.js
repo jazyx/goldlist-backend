@@ -5,7 +5,10 @@
 
 const router = require('express').Router()
 const { checkPass } = require('./middleware')
-const { getUserData } = require('./controllers')
+const { 
+  getUserData, 
+  savePhrase
+} = require('./controllers')
 
 
 // Ensure that the call came from a client that has already
@@ -14,6 +17,7 @@ router.use(checkPass)
 
 
 router.post("/getUserData", getUserData)
+router.post("/savePhrase", savePhrase)
 
 
 module.exports = router

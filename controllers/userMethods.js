@@ -47,9 +47,6 @@
  *          }, ...
  *        ]
  *      }
- *
- * addPhrase:
- *   Does nothing yet
  */
 
 const { User, List, Phrase } = require('../database')
@@ -169,24 +166,26 @@ function getUserData(req, res) {
 
       List.findOne(query).select(selection)
         .then(list => resolve({ user, list }))
-        .catch(treatError)
+        .catch(reject)
 
     })
   }
 
 
   function getActiveListPhrases({ user, list }) {    
-    const { _id: list_id, index, created } = list
-    const selection = ["text", "hint", "retained" ]
+    const { _id, index, created } = list
+    const selection = [ "text", "hint", "retained" ]
 
     return new Promise(( resolve, reject ) => {
-      const query = { lists: { $elemMatch: { $eq: list_id } } }
+      const query = { lists: { $elemMatch: { $eq: _id } } }
    
       Phrase.find(query).select(selection)
         .then(treatPhrases)
+        .catch(reject)
 
       function treatPhrases(phrases) {
         const list = {
+          _id,
           index,
           created,
           phrases
@@ -238,6 +237,7 @@ function getUserData(req, res) {
         .then(redos => {
           resolve({ user, list, redos })
         })
+        .catch(reject)
     })
   }
 
@@ -251,12 +251,14 @@ function getUserData(req, res) {
 
         Phrase.find(query).select(selection)
           .then(phrases => resolve({ list, phrases }))
+          .catch(reject)
       })
     })
 
     return new Promise(( resolve, reject ) => {
       Promise.all(promises)
         .then(redos => resolve({ user, list, redos }))
+        .catch(reject)
     })
   }
 
@@ -287,11 +289,6 @@ function getUserData(req, res) {
 }
 
 
-function addPhrase(user, phrase) {
-
-}
-
 module.exports = {
-  getUserData,
-  addPhrase
+  getUserData
 }
