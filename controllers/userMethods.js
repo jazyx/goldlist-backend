@@ -275,7 +275,7 @@ function getUserData(req, res) {
         const query = { lists: { $elemMatch: { $eq: list._id } } }
 
         Phrase.find(query).select(selection)
-          .then(phrases => resolve({ list, phrases }))
+          .then(phrases => resolve({ ...list, phrases }))
           .catch(reject)
       })
     })

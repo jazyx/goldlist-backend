@@ -14,7 +14,6 @@ const PROD_REGEX = /^(production|prod|staging|release|deploy)$/i
 const is_dev = !PROD_REGEX.test(process.env.NODE_ENV)
 process.env.IS_DEV = is_dev
 
-
 const express = require('express')
 const cookieSession = require('cookie-session')
 const { serveCookie } = require('./middleware')
