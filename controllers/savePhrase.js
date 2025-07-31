@@ -29,15 +29,15 @@ function savePhrase(req, res) {
   let message = {}
 
 
-  // New phrase to add
+  // New phrase to add. Use the integer _id as the key.
   if (_id === Number(_id)) {
-    return addPhrase({list_id, _id, text, hint })
+    return addPhrase({list_id, key: _id, text, hint })
       .then(treatSuccess)
       .catch(treatError)
       .finally(proceed)
   }
 
-  function addPhrase({ list_id, _id: key, text, hint }) {
+  function addPhrase({ list_id, key, text, hint }) {
     const created = new Date()
     // Convert string list_id to Object.Id
     list_id = new mongoose.Types.ObjectId(list_id)
@@ -73,15 +73,7 @@ function savePhrase(req, res) {
           const { _id, key, text, hint } = phrase
           const data = { list_id, key, _id, text, hint }
 
-          // Add the (new) length of the list
-          const query = { lists: { $elemMatch: { $eq: list_id } } }
-
-          Phrase.countDocuments(query)
-            .then(length => {
-              data.length = length
-              data.list_id = list_id
-              resolve(data)
-            })
+          return resolve(data)
         }
       }
     })
@@ -103,6 +95,11 @@ function savePhrase(req, res) {
   function treatUpdate(phrase) {
     const { _id, key, text, hint } = phrase
     const data = { list_id, _id, key, text, hint }
+
+    // If phrase has no text tell frontend to decrement List.length
+    if (!text) {
+      data.length = -1
+    }
 
     return Promise.resolve(data)
   }

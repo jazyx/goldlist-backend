@@ -8,7 +8,8 @@ const { checkPass } = require('./middleware')
 const { 
   getUserData, 
   savePhrase,
-  addList
+  addList,
+  submitReview
 } = require('./controllers')
 
 
@@ -20,6 +21,7 @@ router.use(checkPass)
 router.post("/getUserData", getUserData)
 router.post("/savePhrase", savePhrase)
 router.post("/addList", addList)
+router.post("/submitReview", submitReview)
 
 
 module.exports = router

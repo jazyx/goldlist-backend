@@ -195,6 +195,10 @@ function getUserData(req, res) {
   }
 
 
+  /**
+   * The array of phrases may contain some that have no text.
+   * The frontend will not count these.
+   */
   function getActiveListPhrases({ user, list }) {
     const { _id, index, created, remain } = list
     const selection = [ "text", "hint", "retained" ]
@@ -211,7 +215,6 @@ function getUserData(req, res) {
           _id,
           index,
           created,
-          length: phrases.length,
           remain,
           phrases
         }]
@@ -241,9 +244,12 @@ function getUserData(req, res) {
     }
     // 2. Contain more than REMAIN unretained phrases
     const remain = { $gt: REMAIN }
+    // 3. Is not an old but still active list
+    const index = { $ne: user.lists }
 
     const $match = {
       user_id,
+      index,
       remain,
       $expr
     }
