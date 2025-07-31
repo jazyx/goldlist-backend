@@ -201,7 +201,7 @@ function getUserData(req, res) {
    */
   function getActiveListPhrases({ user, list }) {
     const { _id, index, created, remain } = list
-    const selection = [ "text", "hint", "retained" ]
+    const selection = [ "text", "hint" ]
 
     return new Promise(( resolve, reject ) => {
       const query = { lists: { $elemMatch: { $eq: _id } } }
@@ -274,7 +274,7 @@ function getUserData(req, res) {
 
 
   function getReviewListPhrases({ user, lists, redos }) {
-    const selection = ["text", "hint", "retained" ]
+    const selection = ["text", "hint", "retained", "limit" ]
 
     const promises = redos.map( list => {
       return new Promise(( resolve, reject ) => {

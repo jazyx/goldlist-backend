@@ -22,7 +22,8 @@ const schema = new Schema({
   text:     { type: String, required: true },
   hint:     { type: String },
   created:  { type: Date, default: new Date() },
-  retained: { type: Date }
+  retained: { type: Date },
+  limit:    { type: Boolean }
 });
 
 const Phrase = model("Phrase", schema);
