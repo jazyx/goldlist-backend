@@ -53,6 +53,7 @@
  */
 
 const { User, List, Phrase } = require('../database')
+const { initializeUserData } = require('./initializeUserData')
 const { addList } = require('./addList')
 const DELAY = 3
 const REMAIN = 7
@@ -117,7 +118,7 @@ function getUserData(req, res) {
 
 
       // If there is no matching User, then create a new User with
-      // the GUEST+UUID name.
+      // the GUEST+UUID name + a default set of lists and phrases
       function createUser(skip) {
         if (skip) { return } // already resolved in checkPassword
 
@@ -126,13 +127,31 @@ function getUserData(req, res) {
           // email,
           // password,
           start_date: last_access,
-          page: 0
         }
 
-        new User(userData)
-          .save()
-          .then(resolve) // the new User is the resolve argument
-          .catch(reject)
+       initializeUserData(userData)
+         .then(treatNewUser)
+         .catch(error => console.log("error", JSON.stringify(error, null, '  ')))
+
+
+        function treatNewUser(initial) {
+          const active = initial.redos.findIndex( list => (
+            list.remain === 20
+          ))
+          const list = initial.redos.splice(active, 1)[0]
+          initial.list = list
+
+          // const swap = (key, value) => {
+          //   if (key === "phrases") {
+          //     return value.map( phrase => phrase.text )
+          //   }
+          //   return value
+          // }
+
+          // console.log("initial", JSON.stringify(initial, swap, '  '));
+
+          resolve(initial.user)
+        }
       }
     })
   }
@@ -173,7 +192,6 @@ function getUserData(req, res) {
       List.findOne(query).select(selection)
         .then(list => resolve({ user, list }))
         .catch(reject)
-
     })
   }
 

@@ -17,7 +17,7 @@ const schema = new Schema({
   user_name:   { type: String, required: true, unique: true },
   email:       { type: String },
   hash:        { type: String },
-  start_date:  { type: Date, required: true },
+  start_date:  { type: Date, default: new Date() },
   last_access: { type: Date, default: new Date() },
   lists:       { type: Number, default: 0 },
   knots:       { type: Number, default: 10000 }
