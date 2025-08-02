@@ -131,7 +131,10 @@ function getUserData(req, res) {
 
        initializeUserData(userData)
          .then(treatNewUser)
-         .catch(error => console.log("error", JSON.stringify(error, null, '  ')))
+         .catch(error => {
+          console.log("error", JSON.stringify(error, null, '  '))
+          console.log("error:", error)
+         })
 
 
         function treatNewUser(initial) {

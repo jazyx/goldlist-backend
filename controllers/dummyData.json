@@ -24,7 +24,7 @@
   ],
   "numbers": [
     { "text": "1", "hint": "один" },
-    { "text": "2", "hint": "два" },
+    { "text": "2", "hint": "The number that comes after 1 is ___ " },
     { "text": "3", "hint": "три" },
     { "text": "4", "hint": "четыре" },
     { "text": "5", "hint": "пять" },

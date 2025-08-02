@@ -19,7 +19,15 @@ const schema = new Schema({
               required: true
             }] },
   key:      { type: Number, required: true},
-  text:     { type: String, required: true },
+  text:     {
+    type: String,
+    // required: true, // won't allow empty stringl
+    // validate: {
+    //   validator: value => typeof value === "string",
+    //   message: 'text field is required but may be empty'
+    // },
+    default: ""
+  },
   hint:     { type: String },
   created:  { type: Date, default: new Date() },
   retained: { type: Date },

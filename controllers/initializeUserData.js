@@ -65,14 +65,12 @@ function makeLists(resolve, reject, user, now) {
   const entries = Object.entries(backDates)
 
   const promises = entries.map(([ key, backdate ], index) => {
-    const { phrases, data } = getPhraseDate(
+    const { phrases, data } = getPhrasesData(
       user_id, key, now, backdate, index
     )
     const { reviews, created } = data
     const ago = (DELAY * ( reviews - 1 )) * DAYS
     const retained = new Date(now - ago)
-
-    console.log("makeLists data:", data)
 
     return new List(data)
       .save()
@@ -123,31 +121,17 @@ function makePhrases({
 
     return new Phrase(phrase)
       .save()
-      // .then(result => {
-      //   console.log("PHRASE", JSON.stringify(result, null, '  '))
-      //   return result
-      // })
       .then(result => Promise.resolve(result))
-      .catch(error => {
-        console.log("PHRASE error", JSON.stringify(error, null, '  '))
-        return error
-      })
+      .catch(reject)
   })
 
   return Promise.all(promises)
-    // .then(result => {
-    //   console.log("PHRASES", JSON.stringify(result, null, '  '))
-    //   return result
-    // })
     .then(phrases => Promise.resolve({ ...info, phrases }))
-    .catch(error => {
-      console.log("PHRASES error", JSON.stringify(error, null, '  '))
-      reject(error)
-    })
+    .catch(reject)
 }
 
 
-function getPhraseDate(user_id, key, now, backdate, index) {
+function getPhrasesData(user_id, key, now, backdate, index) {
   const phrases = dummyData[key]
 
   const remain = phrases.reduce(( sum, phrase ) => {
