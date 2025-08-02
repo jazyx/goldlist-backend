@@ -26,9 +26,13 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || "string needed"
 
 const server = express()
 if (is_dev) {
-  // Accept all requests... but only in dev mode
-  console.log("🤚USING CORS FOR DEVELOPMENT")
-  server.use(require('cors')())
+  // Accept all requests from localhost, but only in dev mode
+  console.log("🤚 USING CORS FOR DEVELOPMENT")
+  server.use(require('cors')({
+    origin: /http:\/\/localhost:\d+/,
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+  }))
 }
 
 server.use(express.urlencoded({ extended: false }));
@@ -38,7 +42,8 @@ const cookieOptions = {
   name: "session",
   keys: [ COOKIE_SECRET ],
   httpOnly: true,
-  sameSite: true
+  sameSite: is_dev ? false : true,
+  secure: is_dev ? false : true
 }
 server.use(cookieSession(cookieOptions))
 

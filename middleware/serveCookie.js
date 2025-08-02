@@ -1,5 +1,13 @@
 /**
  * backend/middleware/serveCookie.js
+ * 
+ * In production, create a cookie to confirm that the user first
+ * visited the root of the site. This prevents requests being made
+ * directly to an API endpoint from any site other than the
+ * official one.
+ * 
+ * During development, this cookie may not exist, and all API
+ * requests will be respected anyway.
  */
 
 

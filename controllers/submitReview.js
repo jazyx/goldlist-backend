@@ -53,13 +53,8 @@ function submitReview (req, res, next) {
         $inc: { remain: -reviewed.length}
       }
 
-      List.findByIdAndUpdate(
-        _id,
-        update,
-        { new: true }
-      )
+      List.findByIdAndUpdate( _id, update, { new: true } )
         .then(result => {
-          console.log("list", JSON.stringify(result, null, '  '));
           const { _id, index, reviews, remain } = result
           const list = { _id, index, reviews, remain }
 
@@ -71,8 +66,6 @@ function submitReview (req, res, next) {
 
   // Handle response
   function treatSuccess(result) {
-    console.log("submitReview result", JSON.stringify(result, null, '  '));
-
     Object.assign(message, result )
   }
 

@@ -44,11 +44,11 @@ const checkPass = (req, res, next) => {
   let status = 0
   let message = ""
 
-  if (!pass) {
+  if (is_dev || !pass) {
     if (is_dev) {
       console.log(`🤚DEV: PASS ${req.path} REQUEST FOR ${referer}`)
 
-    } else {
+    } else if (!pass) {
       // Ignore API request: serve home page + cookie instead
       return res.redirect("/")
     }

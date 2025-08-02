@@ -138,20 +138,30 @@ function getUserData(req, res) {
 
 
         function treatNewUser(initial) {
-          const active = initial.redos.findIndex( list => (
-            list.remain === 20
-          ))
-          const list = initial.redos.splice(active, 1)[0]
-          initial.list = list
+          // Move "redo" with highest index to list
+          const max = initial.redos.reduce(( max, redo ) => {
+            if (redo.index > max) {
+              max = redo.index
+            }
+            return max
+          }, 0)
 
-          // const swap = (key, value) => {
-          //   if (key === "phrases") {
-          //     return value.map( phrase => phrase.text )
-          //   }
-          //   return value
-          // }
+          const active = initial.redos.findIndex( list => (
+            list.index === max
+          ))
+
+          initial.list = initial.redos.splice(active, 1)[0]
+
+          const swap = (key, value) => {
+            if (key === "phrases") {
+              return value.map( phrase => phrase.text )
+            }
+            return value
+          }
 
           // console.log("initial", JSON.stringify(initial, swap, '  '));
+
+          // console.log("NEW USER _ID:", JSON.stringify(initial.user._id))
 
           resolve(initial.user)
         }
@@ -316,6 +326,24 @@ function getUserData(req, res) {
 
 
   function prepareMessage({ user, lists, redos }) {
+    // Keep only necessary user fields
+    const {
+      _id,
+      user_name,
+      start_date,
+      last_access,
+      lists: total,
+      knots
+    } = user
+    user = {
+      _id,
+      user_name,
+      start_date,
+      last_access,
+      lists: total,
+      knots
+    }
+
     Object.assign(message, {
       user,
       lists,
@@ -325,7 +353,7 @@ function getUserData(req, res) {
 
 
   function treatError(error) {
-    console.log("Error in getUserData:\n", JSON.stringify(error, null, '  '), "\nreq.body\n", JSON.stringify(req.body, null, '  '));
+    console.log("Error in getUserData:\nmessage", error.message, "\nstack:", error.stack, "\nreq.body\n", JSON.stringify(req.body, null, '  '));
 
     status = 500 // Server error
     message.fail = error
