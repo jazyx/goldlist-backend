@@ -31,7 +31,7 @@ function savePhrase(req, res) {
 
   // New phrase to add. Use the integer _id as the key.
   if (_id === Number(_id)) {
-    return addPhrase({list_id, key: _id, text, hint })
+    return addPhrase({ list_id, key: _id, text, hint })
       .then(treatSuccess)
       .catch(treatError)
       .finally(proceed)

@@ -19,5 +19,8 @@
   ],
   "author": "blackslate",
   "license": "MIT",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^24.1.0"
+  }
 }
