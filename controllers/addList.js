@@ -41,13 +41,10 @@ function addList(req, res) {
     const refresh = { new: true }
 
     return new Promise(( resolve, reject ) => {
-    User.findOneAndUpdate(query, update, refresh)
-      .then(user => {
-        const { lists, user_name } = user
-        console.log("Update user with index", JSON.stringify({ lists, user_name }, null, '  '))
-        
-        resolve(data)
-       })
+      User.findOneAndUpdate(query, update, refresh)
+        .then(user => {
+          resolve(data)
+        })
       .catch(reject)
     })
   }

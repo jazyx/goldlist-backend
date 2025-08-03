@@ -174,7 +174,7 @@ function getUserData(req, res) {
   // or GUEST+UUID has been found or created.
   function treatSuccess(user) {
     updateLastAccess(user)
-      .then(getActiveList)
+      .then(getActiveLists)
       .then(checkList)
       .then(getActiveListPhrases)
       .then(getReviewLists)
@@ -195,31 +195,45 @@ function getUserData(req, res) {
   }
 
 
-  function getActiveList(user) {
+  function getActiveLists(user) {
     const { _id: user_id, lists: index } = user
     const selection = ["index", "created", "remain" ]
+    const ago = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
+    const recently = new Date(Date.now() - ago);
+    const query = {
+      user_id,
+      $or: [
+        { index },
+        { $and: [
+          { created: { $gte: recently } },
+          { submitted: { $ne: true } }
+        ]}
+      ]
+    }
 
     return new Promise(( resolve, reject ) => {
-      const query = { user_id, index }
-
-      List.findOne(query).select(selection)
-        .then(list => resolve({ user, list }))
+      List.find(query).select(selection)
+        .then(lists => resolve({ user, lists }))
         .catch(reject)
     })
   }
 
 
-  function checkList({ user, list }) {
+  function checkList({ user, lists }) {
     return new Promise(( resolve, reject) => {
-      if (list) {
-        return resolve({ user, list })
+      if (lists.length) {
+        return resolve({ user, lists })
       }
 
-      // No active list was found. Create an empty one
+      // No active list was found. Create an empty one.
+      // THIS SHOULD NOT HAPPEN because an empty list is created
+      // for every new user by initializeUserData(). If it does,
+      // the Promise will resolve with `user` and a new list or
+      // { fail: "some error message" }
       const { _id, index } = user
       const req = { body: { _id, index }}
-      const json = list => resolve({ user, list })
-      const res = { status: 0, json }
+      const json = lists => resolve({ user, lists })
+      const res = { status: () => {} , json }
 
       addList(req, res)
     })
@@ -230,28 +244,40 @@ function getUserData(req, res) {
    * The array of phrases may contain some that have no text.
    * The frontend will not count these.
    */
-  function getActiveListPhrases({ user, list }) {
-    const { _id, index, created, remain } = list
-    const selection = [ "text", "hint" ]
+  function getActiveListPhrases({ user, lists }) {
+    if (lists.fail) {
+      // addList failed te create a new empty list for this user
+      return Promise.reject(lists.fail)
+    }
 
-    return new Promise(( resolve, reject ) => {
-      const query = { lists: { $elemMatch: { $eq: _id } } }
+    const promises = lists.map( list => {
+      const { _id, index, created, remain } = list
+      const selection = [ "text", "hint" ]
 
-      Phrase.find(query).select(selection)
-        .then(treatPhrases)
-        .catch(reject)
+      return new Promise(( resolve, reject ) => {
+        const query = { lists: { $elemMatch: { $eq: _id } } }
+        const sort = { key: 1 }
 
-      function treatPhrases(phrases) {
-        const lists = [{
-          _id,
-          index,
-          created,
-          remain,
-          phrases
-        }]
-        resolve({ user, lists })
-      }
+        Phrase.find(query).select(selection).sort(sort)
+          .then(treatPhrases)
+          .catch(reject)
+
+        function treatPhrases(phrases) {
+          const list = {
+            _id,
+            index,
+            created,
+            remain,
+            phrases
+          }
+          resolve(list)
+        }
+      })
     })
+
+    return Promise.all(promises)
+      .then(lists => Promise.resolve({ user, lists }))
+      .catch(error => Promise.reject(error))
   }
 
 
@@ -310,8 +336,9 @@ function getUserData(req, res) {
     const promises = redos.map( list => {
       return new Promise(( resolve, reject ) => {
         const query = { lists: { $elemMatch: { $eq: list._id } } }
+        const sort = { key: 1 }
 
-        Phrase.find(query).select(selection)
+        Phrase.find(query).select(selection).sort(sort)
           .then(phrases => resolve({ ...list, phrases }))
           .catch(reject)
       })
@@ -349,6 +376,9 @@ function getUserData(req, res) {
       lists,
       redos
     })
+
+    // console.log("message", JSON.stringify(message, null, '  '));
+
   }
 
 

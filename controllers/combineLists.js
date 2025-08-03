@@ -15,7 +15,6 @@ const { mongoose, User, List, Phrase } = require('../database')
 
 
 function combineLists(user_id) {
-  console.log("combineLists user_id:", user_id, typeof user_id)
   const query = {
     user_id,
     remain: { $gt: 0, $lt: 8 }
