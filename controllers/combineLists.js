@@ -20,7 +20,6 @@ function combineLists(user_id) {
     user_id,
     remain: { $gt: 0, $lt: 8 }
   }
-  // const selection = [ _id ]
 
   return List.find(query)
     .then(checkKnottyPhrases)
@@ -29,33 +28,13 @@ function combineLists(user_id) {
 
 
   function checkKnottyPhrases(lists) {
-    console.log(
-      "findPhrases lists",
-      JSON.stringify(lists, null, '  ')
-    );
-
     const list_ids = lists.map( list => list._id )
     const query = {
       lists: { $in: list_ids },
       retained: { $eq: null }
     }
 
-    console.log("list_ids", JSON.stringify(list_ids, null, '  '));
-    
-    console.log(
-      "findPhrases query:",
-      JSON.stringify(query, null, '  ')
-    )
-
     return Phrase.find(query)
-      .then(phrases => {
-        console.log(
-          "KNOTTY phrases",
-          JSON.stringify(phrases.map( phrase => phrase.text ))
-        );
-        
-        return phrases
-      })
       .then(phrases => countPhrases({ lists, phrases }))
       .catch(error => Promise.reject(error))
   }
@@ -63,11 +42,6 @@ function combineLists(user_id) {
 
   function countPhrases({ lists, phrases }) {
     const remain = phrases.length
-
-    console.log(
-      "countPhrases remain:", remain, 
-      ", phrases:", JSON.stringify(phrases, null, '  ')
-    )
 
     if ( remain > 14 ) {
       return getUserKnots({ lists, phrases})
@@ -95,8 +69,6 @@ function combineLists(user_id) {
   function createNewList({ user, lists, phrases }) {
     const { knots } = user
 
-    console.log("createNewList knots:", knots)
-
     const data = {
       user_id,
       index: knots,
@@ -122,14 +94,6 @@ function combineLists(user_id) {
     })
 
     return Promise.all(promises)
-      .then(lists => console.log(
-        "ZEROED lists",
-        JSON.stringify(lists.map( list => ({
-          _id: list._id,
-          remain: list.remain,
-          created: list.created
-        })), null, '  '))
-       )
       .then(() => Promise.resolve({ phrases, list }))
       .catch(error => Promise.reject(error))
   }
@@ -137,9 +101,6 @@ function combineLists(user_id) {
 
   function addListIdToPhrases({ phrases, list }) {
     const { _id: list_id } = list
-
-    console.log("addListIdToPhrases list_id:", JSON.stringify(list_id, null, '  '))
-    console.log("phrases:", phrases.length)
 
     const promises = phrases.map( phrase => {
       return new Promise(( resolve, reject ) => {
@@ -156,13 +117,6 @@ function combineLists(user_id) {
     })
 
     return Promise.all(promises)
-      .then(phrases => console.log(
-        "UPDATED phrases",
-        JSON.stringify( phrases.map(phrase => ({
-          text: phrase.text,
-          lists: phrase.lists,
-        })), null, '  '))
-      )
       .then(() => Promise.resolve({ phrases, list }))
       .catch(error => Promise.reject(error))
   }
@@ -170,24 +124,24 @@ function combineLists(user_id) {
 
   // Handle response
   function treatSuccess(result) {
-    const swap = (key, value) => {
-      if (key === "phrases") {
-        return value.map(phrase => phrase.text)
-      }
-      return value
-    }
+    // const swap = (key, value) => {
+    //   if (key === "phrases") {
+    //     return value.map(phrase => phrase.text)
+    //   }
+    //   return value
+    // }
 
-    console.log("******************************")
-    console.log("result", JSON.stringify(result, swap, '  '));
-    console.log("******************************")
+    // console.log("******************************")
+    // console.log("result", JSON.stringify(result, swap, '  '));
+    // console.log("******************************")
 
     return Promise.resolve(result.list)
   }
 
 
   function treatError(error) {
-    console.log("Status for combineLists:\n", error);
-    return Promise.reject()
+    // console.log("Status for combineLists:\n", error);
+    return Promise.reject(error)
   }
 }
 
