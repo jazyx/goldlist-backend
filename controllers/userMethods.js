@@ -52,6 +52,7 @@
  *      }
  */
 
+
 const { User, List, Phrase } = require('../database')
 const { initializeUserData } = require('./initializeUserData')
 const { addList } = require('./addList')
