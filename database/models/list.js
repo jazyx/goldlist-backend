@@ -39,10 +39,11 @@ const schema = new Schema({
     ref: "User",
     required: true
   },
-  index:   { type: Number, default: 0 },
-  created: { type: Date, default: new Date() },
-  reviews: { type: Number, default: 1 },
-  remain:  { type: Number, default: 21 }
+  index:     { type: Number, default: 0 },
+  created:   { type: Date, default: new Date() },
+  reviews:   { type: Number, default: 1 },
+  remain:    { type: Number, default: 21 },
+  submitted: { type: Boolean }
 });
 
 schema.index({ user_id: 1, index: 1 }, { unique: true });

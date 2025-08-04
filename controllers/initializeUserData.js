@@ -52,14 +52,14 @@ function initializeUserData(userData) {
 
     new User(userData)
       .save()
-      .then(user => makeLists(resolve, reject, user, now))
+      .then(user => makeLists( user, now ))
       .then(resolve)
       .catch(reject)
   })
 }
 
 
-function makeLists(resolve, reject, user, now) {
+function makeLists( user, now ) {
   const { _id: user_id } = user
 
   const entries = Object.entries(backDates)
@@ -75,15 +75,13 @@ function makeLists(resolve, reject, user, now) {
     return new List(data)
       .save()
       .then(list => makePhrases({
-        resolve, 
-        reject,
         list,
         created,
         retained,
         phrases
       }))
       .then(list => Promise.resolve(list))
-      .catch(reject)
+      .catch(error => Promise.reject(error))
   })
 
   return Promise.all(promises)
@@ -96,8 +94,6 @@ function makeLists(resolve, reject, user, now) {
 
 
 function makePhrases({ 
-  resolve, 
-  reject,
   list,
   created,
   retained, 
@@ -122,12 +118,12 @@ function makePhrases({
     return new Phrase(phrase)
       .save()
       .then(result => Promise.resolve(result))
-      .catch(reject)
+      .catch(error => Promise.reject(error))
   })
 
   return Promise.all(promises)
     .then(phrases => Promise.resolve({ ...info, phrases }))
-    .catch(reject)
+    .catch(error => Promise.reject(error))
 }
 
 
