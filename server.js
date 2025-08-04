@@ -26,6 +26,8 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || "string needed"
 
 
 const server = express()
+server.set('trust proxy', 1)
+
 if (is_dev) {
   // Accept all requests from localhost, or 192.168.0.X,
   // but only in dev mode
@@ -48,7 +50,6 @@ const cookieOptions = {
   sameSite: is_dev ? false : true,
   secure: !HTTP
 }
-console.log("cookieOptions:", cookieOptions)
 server.use(cookieSession(cookieOptions))
 
 server.use(serveCookie)
