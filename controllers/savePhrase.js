@@ -16,7 +16,7 @@
  */
 
 
-const { mongoose, Phrase } = require('../database')
+const { mongoose, Phrase, List } = require('../database')
 
 
 function savePhrase(req, res) {
@@ -64,7 +64,7 @@ function savePhrase(req, res) {
           new Phrase({ key, text, hint, created, lists })
             .save()
             .then(treatPhrase)
-            // .then(recountPhrases)
+            .then(checkCreationDate)
             .catch(reject)
         }
 
@@ -73,10 +73,43 @@ function savePhrase(req, res) {
           const { _id, key, text, hint } = phrase
           const data = { list_id, key, _id, text, hint }
 
-          return resolve(data)
+          resolve(data)
         }
       }
     })
+
+
+    /**
+     * Counts non-empty phrases in the list, and resets the
+     * creation date if there are now 21
+     */
+    function checkCreationDate(phrase) {
+      const query = {
+        lists: { $elemMatch: { $eq: list_id } },
+        text: { $ne: "" }
+      }
+
+      Phrase.countDocuments(query)
+        .then(resetCreationDateIfNeeded) // output ignored
+        .catch(error => Promise.resolve(error))
+        .finally(() => Promise.resolve(phrase))
+    }
+
+
+    function resetCreationDateIfNeeded(count) {
+      if (count < 21) {
+        return Promise.resolve()
+      }
+      
+      const $set = { created: new Date() }
+      List.findByIdAndUpdate(
+        list_id,
+        { $set },
+        { new: true }
+      )
+        .then(() => Promise.resolve())
+        .catch(error => Promise.resolve(error))
+    }
   }
 
 
@@ -90,7 +123,6 @@ function savePhrase(req, res) {
     .then(treatSuccess)
     .catch(treatError)
     .finally(proceed)
-
 
   function treatUpdate(phrase) {
     const { _id, key, text, hint } = phrase

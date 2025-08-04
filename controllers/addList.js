@@ -1,5 +1,9 @@
 /**
  * backend/controllers/addList.js
+ * 
+ * 1. Creates a new list with the given user_id
+ * 2. Sets the value of User.lists to the index of the new list
+ * 3. Responds with details of the new List record
  */
 
 
@@ -42,10 +46,8 @@ function addList(req, res) {
 
     return new Promise(( resolve, reject ) => {
       User.findOneAndUpdate(query, update, refresh)
-        .then(user => {
-          resolve(data)
-        })
-      .catch(reject)
+        .then(() => resolve(data)) // ignore updated user
+        .catch(reject)
     })
   }
 

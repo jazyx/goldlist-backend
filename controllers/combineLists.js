@@ -8,6 +8,7 @@
  * 3. Add the _id of this new list to the `lists` field of each
  *    of the unretained phrases
  * 4. Set `remain` for the original parent list to 0
+ * -  Does not update the `lists` value for the given user
  */
 
 
