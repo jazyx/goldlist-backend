@@ -63,8 +63,7 @@ function submitReview (req, res, next) {
     return new Promise(( resolve, reject ) => {
       const _id = new mongoose.Types.ObjectId(list_id)
       const update = {
-        $inc: { reviews: 1 },
-        $inc: { remain: -reviewed.length}
+        $inc: { reviews: 1, remain: -reviewed.length }
       }
 
       List.findByIdAndUpdate( _id, update, { new: true } )
@@ -112,7 +111,7 @@ function submitReview (req, res, next) {
     if (status) {
       res.status(status)
     }
-
+    
     res.json(message)
   }
 }
