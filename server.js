@@ -27,6 +27,13 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET || "string needed"
 
 const server = express()
 server.set('trust proxy', 1)
+server.use((req, res, next) => {
+  if (!req.secure) {
+    // Redirect HTTP to HTTPS
+    return res.redirect('https://' + req.headers.host + req.url);
+  }
+  next();
+});
 
 if (is_dev) {
   // Accept all requests from localhost, or 192.168.0.X,
