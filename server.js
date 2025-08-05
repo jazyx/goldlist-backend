@@ -58,21 +58,23 @@ server.use(userCookie)
 server.use(express.static(PUBLIC));
 
 // Allow the browser to refresh any page
+const domain = true // is_dev
+  ? "http://localhost:3000"
+  : "https://goldlist.jazyx.com"
+const CSP =
+  "default-src 'self'; " +
+  "script-src 'self' " + domain + "; " +
+  "style-src 'self' " + domain + "; " +
+  "img-src 'self' " + domain + "; " +
+  "connect-src 'self' " + domain + "; " +
+  "font-src 'self' " + domain + "; " +
+  "form-action 'self'; " +
+  "frame-ancestors 'none';"
+
+console.log("CSP:", CSP)
+
 server.use((req, res, next) => {
-  const domain = is_dev
-    ? "http://localhost:3000"
-    : "https://goldlist.jazyx.com"
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'none'; " +
-    "script-src 'self' " + domain + "; " +
-    "style-src 'self' " + domain + "; " +
-    "img-src 'self' " + domain + "; " +
-    "connect-src 'self' " + domain + "; " +
-    "font-src 'self' " + domain + "; " +
-    "form-action 'self'; " +
-    "frame-ancestors 'none'; "
-  );
+  res.setHeader("Content-Security-Policy", CSP);
   next();
 });
 
