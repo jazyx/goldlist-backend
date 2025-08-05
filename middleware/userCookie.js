@@ -14,10 +14,7 @@ const userCookie = (req, res, next) => {
 
   if (!user_id) {
     user_id = uuid()
-    console.log("CREATE user_id:", user_id)
     req.session.user_id = user_id
-  } else {
-    console.log("EXISTING user_id:", user_id)
   }
 
   next()
