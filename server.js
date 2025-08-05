@@ -58,9 +58,10 @@ server.use(userCookie)
 server.use(express.static(PUBLIC));
 
 // Allow the browser to refresh any page
-const domain = true // is_dev
+const domain = is_dev
   ? "http://localhost:3000"
   : "https://goldlist.jazyx.com"
+// It turns out that both localhost and goldlist work in production
 const CSP =
   "default-src 'self'; " +
   "script-src 'self' " + domain + "; " +
@@ -71,7 +72,7 @@ const CSP =
   "form-action 'self'; " +
   "frame-ancestors 'none';"
 
-console.log("CSP:", CSP)
+// console.log("CSP:", CSP)
 
 server.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", CSP);
