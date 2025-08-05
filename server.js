@@ -37,8 +37,19 @@ if (is_dev) {
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
   }
+  console.log("CORS options", options);
+  
   server.use(require('cors')(options))
 }
+
+server.options('*', (req, res) => {
+  console.log("Preflight OPTIONS request detected", req.method);
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.send();
+});
 
 server.use(express.urlencoded({ extended: false }));
 server.use(express.json());
@@ -48,9 +59,13 @@ const cookieOptions = {
   keys: [ COOKIE_SECRET ],
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
   httpOnly: true,
-  sameSite: 'Lax', // also sends cookie in top-level navigation
+  sameSite: is_dev
+    ? false
+    : 'Lax', // also sends cookie in top-level navigation
   secure: !HTTP
 }
+console.log("cookieOptions", JSON.stringify(cookieOptions, null, '  '));
+
 server.use(cookieSession(cookieOptions))
 
 server.use(serveCookie)
@@ -72,13 +87,21 @@ const CSP =
   "form-action 'self'; " +
   "frame-ancestors 'none';"
 
-// console.log("CSP:", CSP)
+console.log("CSP", JSON.stringify(CSP, null, '  '));
+
 
 server.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", CSP);
   next();
 });
 
+server.use((req,res,next) => {
+  const { method, protocol, hostname, path, body, session, cookies, headers } = req
+  const { referer } = headers
+
+  console.log("req", JSON.stringify({ method, protocol, hostname, path, body, session, cookies, referer }, null, '  '));
+  next()
+})
 server.use('/', router)
 
 server.listen(PORT, logHostsToConsole)
