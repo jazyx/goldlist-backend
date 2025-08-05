@@ -56,6 +56,26 @@ server.use(cookieSession(cookieOptions))
 server.use(serveCookie)
 server.use(userCookie)
 server.use(express.static(PUBLIC));
+
+// Allow the browser to refresh any page
+server.use((req, res, next) => {
+  const domain = is_dev
+    ? "http://localhost:3000"
+    : "https://goldlist.jazyx.com"
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'none'; " +
+    "script-src 'self' " + domain + "; " +
+    "style-src 'self' " + domain + "; " +
+    "img-src 'self' " + domain + "; " +
+    "connect-src 'self' " + domain + "; " +
+    "font-src 'self' " + domain + "; " +
+    "form-action 'self'; " +
+    "frame-ancestors 'none'; "
+  );
+  next();
+});
+
 server.use('/', router)
 
 server.listen(PORT, logHostsToConsole)
