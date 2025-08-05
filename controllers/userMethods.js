@@ -64,6 +64,7 @@ const REMAIN = 7
 function getUserData(req, res) {
   const last_access = new Date()
   const user_id = req.session?.user_id || ""
+  // console.log("req.session?.user_id:", req.session?.user_id)
   const { user_name, email, password } = req.body
 
   // Ensure `guest` does not accumulate extra user_ids
@@ -71,6 +72,16 @@ function getUserData(req, res) {
 
   let status = 0
   let message = {}
+
+  if (!password && !user_id) {
+    status = 403 // Forbidden
+    const error = {
+      message: "No user_id cookie or password",
+      stack: "N/A"
+    }
+    treatError(error)
+    return proceed()
+  }
 
   // Allow user to log in with either username or email
   const promises = [
@@ -386,7 +397,7 @@ function getUserData(req, res) {
   function treatError(error) {
     console.log("Error in getUserData:\nmessage", error.message, "\nstack:", error.stack, "\nreq.body\n", JSON.stringify(req.body, null, '  '));
 
-    status = 500 // Server error
+    status = status || 500 // Server error
     message.fail = error
   }
 

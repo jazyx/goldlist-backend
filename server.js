@@ -21,19 +21,12 @@ const { serveCookie } = require('./middleware')
 const { userCookie } = require('./middleware')
 const router = require('./router')
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 5555
 const COOKIE_SECRET = process.env.COOKIE_SECRET || "string needed"
 
 
 const server = express()
 server.set('trust proxy', 1)
-server.use((req, res, next) => {
-  if (!req.secure) {
-    // Redirect HTTP to HTTPS
-    return res.redirect('https://' + req.headers.host + req.url);
-  }
-  next();
-});
 
 if (is_dev) {
   // Accept all requests from localhost, or 192.168.0.X,
@@ -53,6 +46,7 @@ server.use(express.json());
 const cookieOptions = {
   name: "session",
   keys: [ COOKIE_SECRET ],
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
   httpOnly: true,
   sameSite: is_dev ? false : true,
   secure: !HTTP
@@ -86,15 +80,6 @@ function logHostsToConsole() {
   const hosts = ips.map( ip => (
     `http://${ip}:${PORT}`)
   )
-
-  // /private/etc/hosts defines app.org as running at 127.0.0.1
-  // and /opt/homebrew/etc/nginx/servers/app.conf creates...
-  //
-  //   proxy_pass http://127.0.0.1:8888
-  //
-  // ... so we can connect through http://app.local, too.
-
-  hosts.push("\n  http://app.local")
 
   console.log(`Express server listening at:
   ${hosts.join("\n  ")}
