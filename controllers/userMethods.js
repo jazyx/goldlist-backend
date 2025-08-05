@@ -64,7 +64,7 @@ const REMAIN = 7
 function getUserData(req, res) {
   const last_access = new Date()
   const user_id = req.session?.user_id || ""
-  // console.log("req.session?.user_id:", req.session?.user_id)
+  console.log("req.session?.user_id:", req.session?.user_id)
   const { user_name, email, password } = req.body
 
   // Ensure `guest` does not accumulate extra user_ids
