@@ -48,7 +48,7 @@ const cookieOptions = {
   keys: [ COOKIE_SECRET ],
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
   httpOnly: true,
-  sameSite: is_dev ? false : true,
+  sameSite: 'Lax', // also sends cookie in top-level navigation
   secure: !HTTP
 }
 server.use(cookieSession(cookieOptions))
