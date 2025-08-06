@@ -10,7 +10,8 @@ const {
   savePhrase,
   addList,
   submitList,
-  submitReview
+  submitReview,
+  checkCookie
 } = require('./controllers')
 
 
@@ -19,6 +20,7 @@ const {
 router.use(checkPass)
 
 
+router.get("/checkCookie", checkCookie)
 router.post("/getUserData", getUserData)
 router.post("/savePhrase", savePhrase)
 router.post("/addList", addList)

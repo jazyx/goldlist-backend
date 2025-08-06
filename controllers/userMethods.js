@@ -58,6 +58,7 @@ const { initializeUserData } = require('./initializeUserData')
 const { addList } = require('./addList')
 const DELAY = 14
 const REMAIN = 7
+const ACTIVE_AGE = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
 
 
 
@@ -209,8 +210,7 @@ function getUserData(req, res) {
   function getActiveLists(user) {
     const { _id: user_id, lists: index } = user
     const selection = ["index", "created", "remain" ]
-    const ago = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
-    const recently = new Date(Date.now() - ago);
+    const recently = new Date(Date.now() - ACTIVE_AGE);
     const query = {
       user_id,
       $or: [

@@ -3,6 +3,7 @@
  */
 
 
+const { checkCookie } = require('./checkCookie')
 const { getUserData } = require('./userMethods')
 const { savePhrase } = require('./savePhrase')
 const { addList } = require('./addList')
@@ -11,6 +12,7 @@ const { submitReview } = require('./submitReview')
 
 
 module.exports = {
+  checkCookie,
   getUserData,
   savePhrase,
   addList,
