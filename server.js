@@ -37,7 +37,15 @@ if (is_dev) {
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
   }
-  console.log("CORS options", options);
+
+  const swap = (key, value) => {
+    if (value instanceof RegExp) {
+      return value.toString()
+    }
+    
+    return value
+  }
+  console.log("CORS options", JSON.stringify(options, swap, '  '));
   
   server.use(require('cors')(options))
 }
@@ -95,7 +103,8 @@ server.use((req, res, next) => {
   next();
 });
 
-server.use((req,res,next) => {
+// Log all incoming requests
+server.use((req, res, next) => {
   const { method, protocol, hostname, path, body, session, cookies, headers } = req
   const { referer } = headers
 

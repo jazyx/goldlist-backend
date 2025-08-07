@@ -12,6 +12,7 @@
 
 const { Schema, model } = require('mongoose')
 const bcrypt = require('bcryptjs');
+const { SALT } = require('../../constants')
 
 
 const schema = new Schema({
@@ -29,19 +30,20 @@ const schema = new Schema({
 
 schema.pre("save", function(next) {
   if (this.user_name) {
-    this.username = this.user_name.toLowerCase();
+    this.lowercase = this.user_name.toLowerCase();
   }
   next();
 });
 
 
 // Pre-save hook to hash the password before saving the user
-userSchema.pre('save', async function(next) {
+schema.pre('save', async function(next) {
   // Hash the password only if it is modified or new
-  if (this.isModified('hash')) {
+  const hasChanged = this.isModified('hash')
+  if (hasChanged) {
     try {
       // Salt rounds, higher number = more secure but slower
-      const salt = await bcrypt.genSalt(10);
+      const salt = await bcrypt.genSalt(SALT);
       this.hash = await bcrypt.hash(this.hash, salt);
     } catch (error) {
       return next(error); // Handle errors
