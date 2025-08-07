@@ -67,9 +67,6 @@ function getUserData(req, res) {
   const user_id = req.session?.user_id || ""
   const { user_name, email, password } = req.body
 
-  // Ensure `guest` does not accumulate extra user_ids
-  const guest = `${user_name.replace(`_${user_id}`,"")}_${user_id}`
-
   let status = 0
   let message = {}
 
@@ -83,19 +80,18 @@ function getUserData(req, res) {
     return proceed()
   }
 
-  // Allow user to log in with either username or email
+  // Allow user to log in with either username or email, or an
+  // anonymouse user_id from a cookie.
   const promises = [
-    // findUser({ email }),
-    // findUser({ user_name }),
-    // findUser({ email: user_id }),
-    // findUser({ user_name: user_id })
-    findUser({ user_name: guest })
+    findUser({ email }),
+    findUser({ user_name }),
+    findUser({ user_id })
   ]
 
 
   // Treat the first query which produces a valid user
   Promise.any(promises)
-    .then(treatSuccess) // resolves with a User record
+    .then(collectDataFor) // resolves with a User record
     .catch(treatError)
 
 
@@ -110,8 +106,8 @@ function getUserData(req, res) {
 
       // If there is no password in the body, then the user is not
       // logging in with a registered user_name or email address.
-      // If there is an existing user with the GUEST+UUID name,
-      // then use that.
+      // If there is an existing user with the UUID name, then use
+      // that.
       function checkPassword(user) {
         if (user) {
           const pass = !password
@@ -130,12 +126,12 @@ function getUserData(req, res) {
 
 
       // If there is no matching User, then create a new User with
-      // the GUEST+UUID name + a default set of lists and phrases
+      // the UUID name + a default set of lists and phrases
       function createUser(skip) {
         if (skip) { return } // already resolved in checkPassword
 
         const userData = {
-          user_name: (password ? user_name : guest),
+          user_name: (password ? user_name : user_id),
           // email,
           // password,
           start_date: last_access,
@@ -150,51 +146,28 @@ function getUserData(req, res) {
 
 
         function treatNewUser(initial) {
-          // Move "redo" with highest index to list
-          const max = initial.redos.reduce(( max, redo ) => {
-            if (redo.index > max) {
-              max = redo.index
-            }
-            return max
-          }, 0)
-
-          const active = initial.redos.findIndex( list => (
-            list.index === max
-          ))
-
-          initial.list = initial.redos.splice(active, 1)[0]
-
-          const swap = (key, value) => {
-            if (key === "phrases") {
-              return value.map( phrase => phrase.text )
-            }
-            return value
-          }
-
-          // console.log("initial", JSON.stringify(initial, swap, '  '));
-
-          // console.log("NEW USER _ID:", JSON.stringify(initial.user._id))
-
+          // Separation of redos into redos + lists moved to
+          // register.js, as it is not needed here
           resolve(initial.user)
         }
       }
     })
   }
+}
 
 
-  // A User record with the appropriate user_name|email+password
-  // or GUEST+UUID has been found or created.
-  function treatSuccess(user) {
-    updateLastAccess(user)
-      .then(getActiveLists)
-      .then(checkList)
-      .then(getActiveListPhrases)
-      .then(getReviewLists)
-      .then(getReviewListPhrases)
-      .then(prepareMessage)
-      .catch(treatError)
-      .finally(proceed)
-  }
+// A User record with the appropriate user_name|email+password
+// or UUID has been found or created.
+function collectDataFor(user) {
+  updateLastAccess(user)
+    .then(getActiveLists)
+    .then(checkList)
+    .then(getActiveListPhrases)
+    .then(getReviewLists)
+    .then(getReviewListPhrases)
+    .then(treatSuccess)
+    .catch(treatError)
+    .finally(proceed)
 
 
   function updateLastAccess(user) {
@@ -363,7 +336,7 @@ function getUserData(req, res) {
   }
 
 
-  function prepareMessage({ user, lists, redos }) {
+  function treatSuccess({ user, lists, redos }) {
     // Keep only necessary user fields
     const {
       _id,
@@ -412,5 +385,6 @@ function getUserData(req, res) {
 
 
 module.exports = {
-  getUserData
+  getUserData,
+  collectDataFor
 }

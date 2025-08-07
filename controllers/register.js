@@ -1,0 +1,177 @@
+/**
+ * backend/controllers/register.js
+ */
+
+const { User } = require('../database')
+const { makeLists } = require('./initializeUserData')
+const { collectDataFor } = require('./userMethods')
+
+
+/**
+ * Action: calls res.json() with the result af the registration
+ * process. If all is well, the response value should be...
+ * 
+ *   { user, lists, redos }
+ * 
+ * ... ready to be set as userData in the frontend
+ * 
+ * If the user_name or password are invalid, or if the user_name
+ * is already in use, responds with { fail: "reason" }
+ */
+function register(req, res, next) {
+  const last_access = new Date()
+  const user_id = req.session?.user_id || ""
+  const { user_name, email, password } = req.body
+
+
+  let status = 0
+  let message = {}
+
+  // Check if user_name and password are both valid
+  if (!user_name || !password ) {
+    let error = ""
+    if (user_name) {
+      error = `Missing password for ${user_name}`
+    } else if (password) {
+      error = "Missing username"
+    } else {
+      error = "Username and password missing"
+    }
+
+    status = 400 // Bad Request
+    treatError(error)
+
+  } else {
+    checkForExistingUserName()
+  }
+
+
+  /**
+   * Checks if the given user_name is in use (case-insensitive).
+   * If 
+   */
+  function checkForExistingUserName() {
+    const username = user_name.toLowerCase()
+
+    User.find({ username })
+      .then(createOrUpdateIfUniqueUsername)
+      .then(treatSuccess) // resolves with { user, lists, redos }
+      .catch(treatError) // will be triggered if user_name exists
+      .finally(proceed)
+  }
+  
+
+
+  function createOrUpdateIfUniqueUsername(user) {
+    if (user) {
+      // Can't create a new user with same name as an existing one
+      return Promise.reject("userExists")
+
+    } else {
+      // Return a promise 
+      return createIfMissing()
+    }
+  }
+   
+
+  function createIfMissing(user) {
+    // Check if an existing User record exists for user_id
+    User.find({ user_id })
+      .then(createOrUpdate)
+      .catch(error => Promise.reject(error))
+  }
+
+
+  function createOrUpdate(user) {
+    if (user) {
+      return updateUser(user)
+    } else {
+      return createNewUser()
+    }
+  }
+
+
+  function updateUser(user) {
+    user.user_name = user_name
+    user.email = email
+    user.hash = password // will be hashed on pre-save
+    user.save()
+      .then(collectDataFor) // returns a resolved Promise
+      .catch(error => Promise.reject(error))
+  }
+
+  
+
+  function createNewUser() {
+    const data = { user_name, email, password, lists: 5 }
+    new User(data)
+      .save()
+      .then(makeLists)
+      // data will be { redos, user }
+      .then(separateListsFromRedos)
+      .then(data => Promise.resolve(data))
+      .catch(error => Promise.reject(error))
+  } 
+
+
+  function separateListsFromRedos(data) {
+    // Move "redo" with highest index to lists
+    const max = data.redos.reduce(( max, redo ) => {
+      if (redo.index > max) {
+        max = redo.index
+      }
+      return max
+    }, 0)
+
+    const active = data.redos.findIndex( list => (
+      list.index === max
+    ))
+
+    data.lists = data.redos.splice(active, 1)
+
+    const swap = (key, value) => {
+      if (key === "phrases") {
+        return value.map( phrase => phrase.text )
+      }
+      return value
+    }
+
+    console.log(
+      "Newly-registered user data:",
+      JSON.stringify(data, swap, '  ')
+    );
+
+    // console.log("NEW USER _ID:", JSON.stringify(data.user._id))
+    return Promise.resolve(data)
+  }
+
+
+
+  // Handle response
+  function treatSuccess(data) {
+    const { redos } = data
+    const index = redos.findIndex( list => list.index === 5 )
+    Object.assign(message, phrase )
+  }
+
+
+  function treatError(error) {
+    console.log("Error in register:\n", req.body, error);
+    status = status || 500 // Server error
+    message.fail = error
+  }
+
+
+  function proceed() {
+    if (status) {
+      res.status(status)
+    }
+
+    res.json(message)
+  }
+}
+
+
+module.exports = {
+  register
+}

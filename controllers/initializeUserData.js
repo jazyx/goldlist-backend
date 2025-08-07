@@ -48,18 +48,18 @@ function initializeUserData(userData) {
   // }
   return new Promise(( resolve, reject ) => {
     userData.lists = 5
-    const now = new Date().getTime()
 
     new User(userData)
       .save()
-      .then(user => makeLists( user, now ))
+      .then(user => makeLists( user ))
       .then(resolve)
       .catch(reject)
   })
 }
 
 
-function makeLists( user, now ) {
+function makeLists( user ) {
+  const now = new Date().getTime()
   const { _id: user_id } = user
 
   const entries = Object.entries(backDates)
@@ -160,5 +160,6 @@ function getPhrasesData(user_id, key, now, backdate, index) {
 
 
 module.exports = {
-  initializeUserData
+  initializeUserData,
+  makeLists
 }
