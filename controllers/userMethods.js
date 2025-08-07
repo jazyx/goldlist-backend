@@ -54,7 +54,7 @@
 
 
 const { User, List, Phrase } = require('../database')
-const { initializeUserData } = require('./initializeUserData.js.old')
+const { initializeUserData } = require('./initializeUserData.js')
 const { addList } = require('./addList')
 const DELAY = 14
 const REMAIN = 7

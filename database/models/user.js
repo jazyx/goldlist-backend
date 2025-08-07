@@ -29,7 +29,9 @@ const schema = new Schema({
 
 
 schema.pre("save", function(next) {
-  if (this.user_name) {
+  const hasUser_name = this.user_name
+  const user_nameHasChanged = this.isModified('user_name') // ""?
+  if (hasUser_name || user_nameHasChanged) {
     this.lowercase = this.user_name.toLowerCase();
   }
   next();

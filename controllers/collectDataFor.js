@@ -3,29 +3,31 @@
  */
 
 
+const { List, Phrase } = require('../database')
+const { ACTIVE_AGE, DELAY, REMAIN } = require('../constants')
+const { addList } = require('./addList')
+
 
 // A User record with the appropriate user_name|email+password
 // or UUID has been found or created.
 function collectDataFor(user) {
-  updateLastAccess(user)
-    .then(getActiveLists)
+  return getActiveLists(user)
     .then(checkList)
     .then(getActiveListPhrases)
     .then(getReviewLists)
     .then(getReviewListPhrases)
     .then(treatSuccess)
     .catch(treatError)
-    .finally(proceed)
 
 
-  function updateLastAccess(user) {
-    return new Promise(( resolve, reject ) => {
-      user.last_access = last_access
-      user.save()
-        .then(resolve)
-        .catch(reject)
-    })
-  }
+  // function updateLastAccess(user) {
+  //   return new Promise(( resolve, reject ) => {
+  //     user.last_access = new Date()
+  //     user.save()
+  //       .then(resolve)
+  //       .catch(reject)
+  //   })
+  // }
 
 
   function getActiveLists(user) {
@@ -177,7 +179,7 @@ function collectDataFor(user) {
     })
 
     return new Promise(( resolve, reject ) => {
-      Promise.all(promises)
+      return Promise.all(promises)
         .then(redos => resolve({ user, lists, redos }))
         .catch(reject)
     })
@@ -203,31 +205,23 @@ function collectDataFor(user) {
       knots
     }
 
-    Object.assign(message, {
+    return {
       user,
       lists,
       redos
-    })
-
-    // console.log("message", JSON.stringify(message, null, '  '));
-
+    }
   }
 
 
   function treatError(error) {
-    console.log("Error in getUserData:\nmessage", error.message, "\nstack:", error.stack, "\nreq.body\n", JSON.stringify(req.body, null, '  '));
+    console.log("Error in getUserData:\nmessage", error);
 
-    status = status || 500 // Server error
-    message.fail = error
-  }
-
-
-  function proceed() {
-    if (status) {
-      res.status(status)
+    error = {
+      reason: error,
+      status: 400
     }
 
-    res.json(message)
+    return Promise.resolve(error)
   }
 }
 

@@ -13,6 +13,7 @@
 
 const { cookieCheck } = require('./checkCookie')
 const { registerUser } = require('./register')
+const { getData } = require('./getUserData')
 
 
 function checkCookie(req, res) {
@@ -27,13 +28,21 @@ function register(req, res) {
   registerUser(req, res)
   .then(result => {
     // result should be a Promise
+    if (result.lowercase) {
+      console.log("result.lowercase:", result.lowercase, result.user_name)
+    }
     respond(req, res, "/register", result)
   })
 }
 
 
 function getUserData(req, res) {
-
+  console.log("getUser called with:", req.body, req.session.user_id)
+  getData(req, res)
+    .then(result => {
+      // result should be a Promise
+      respond(req, res, "/getUserData", result)
+    })
 }
 
 

@@ -11,7 +11,7 @@
 
 const { User } = require('../database')
 const { initializeUserData } = require('./initializeUserData.js')
-const { collectDataFor } = require('./userMethods')
+const { collectDataFor } = require('./collectDataFor')
 
 
 
@@ -82,6 +82,10 @@ function registerUser(req, res) {
     const result = User
       .findOne({ user_id })
       .then(updateOrCreate)
+      .then(data => {
+        console.log("data", JSON.stringify(data, null, '  '));
+        return data
+      })
       .catch(error => Promise.reject(error))
 
     return result // should be a Promise
@@ -89,8 +93,6 @@ function registerUser(req, res) {
     function updateOrCreate(user) {
       const result = (user)
         ? updateUser(user)
-          .then(collectDataFor(user))
-          .catch(error => Promise.reject(error))
         : createNewUser()
 
       return result // should be a Promise
@@ -100,14 +102,21 @@ function registerUser(req, res) {
     function updateUser(user) {
       user.user_name = user_name
       user.email = email
-      user.passwod = password
+      user.hash = password
+      user.last_access = new Date()
 
       return user.save()
+        .then(collectDataFor)
+        .catch(error => {
+          console.log("collectDataFor error", JSON.stringify(error, null, '  '));
+          
+          Promise.reject(error)
+      })
     }
 
 
     function createNewUser() {
-      const result = new User({ user_name, email, hash: password })
+      return new User({ user_name, email, hash: password })
         .save()
         .then(initializeUserData)
         .catch(error => {
@@ -115,8 +124,6 @@ function registerUser(req, res) {
 
           Promise.resolve(error)
         })
-
-       return result // should be a Promise
     }
   }
 }
