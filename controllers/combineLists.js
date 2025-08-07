@@ -72,7 +72,8 @@ function combineLists(user_id) {
     const data = {
       user_id,
       index: knots,
-      remain: phrases.length
+      remain: phrases.length,
+      submitted: true
     }
 
     return new List(data)
