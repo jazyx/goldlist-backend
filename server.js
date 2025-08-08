@@ -11,7 +11,7 @@ const path = require('path');
 const PUBLIC = path.join(__dirname, 'public')
 
 const HTTP = process.env.HTTP
-const PROD_REGEX = /^(production|prod|staging|release|deploy)$/i
+const PROD_REGEX = /^(prod(uction)?|staging|release|deploy)$/i
 const is_dev = !PROD_REGEX.test(process.env.NODE_ENV)
 process.env.IS_DEV = is_dev
 
@@ -72,7 +72,7 @@ const cookieOptions = {
     : 'Lax', // also sends cookie in top-level navigation
   secure: !HTTP
 }
-console.log("cookieOptions", JSON.stringify(cookieOptions, null, '  '));
+// console.log("cookieOptions", JSON.stringify(cookieOptions, null, '  '));
 
 server.use(cookieSession(cookieOptions))
 
@@ -95,7 +95,7 @@ const CSP =
   "form-action 'self'; " +
   "frame-ancestors 'none';"
 
-console.log("CSP", JSON.stringify(CSP, null, '  '));
+// console.log("CSP", JSON.stringify(CSP, null, '  '));
 
 
 server.use((req, res, next) => {
@@ -104,13 +104,13 @@ server.use((req, res, next) => {
 });
 
 // Log all incoming requests
-server.use((req, res, next) => {
-  const { method, protocol, hostname, path, body, session, cookies, headers } = req
-  const { referer } = headers
+// server.use((req, res, next) => {
+//   const { method, protocol, hostname, path, body, session, cookies, headers } = req
+//   const { referer } = headers
 
-  console.log("req", JSON.stringify({ method, protocol, hostname, path, body, session, cookies, referer }, null, '  '));
-  next()
-})
+//   console.log("req", JSON.stringify({ method, protocol, hostname, path, body, session, cookies, referer }, null, '  '));
+//   next()
+// })
 server.use('/', router)
 
 server.listen(PORT, logHostsToConsole)

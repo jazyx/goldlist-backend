@@ -21,129 +21,103 @@ const { mongoose, Phrase, List } = require('../database')
 
 function saveOrAddPhrase(req, res) {
   // The list_id will be linked to a given user, and _id (if it
-  // is not a number, will already be linked to that list.)
-  const { list_id, _id, text, hint } = req.body
+  // is not a number,) will already be linked to that list.
+  const { list_id: listID, _id, text, hint } = req.body
+  // Convert string list_id to ObjectId
+  const list_id = new mongoose.Types.ObjectId(listID)
 
-  // New phrase to add. Use the integer _id as the key.
-  if (_id === Number(_id)) {
-    return addPhrase({ list_id, key: _id, text, hint })
-      .then(treatSuccess)
+
+  const phrasePromise = (_id === Number(_id))
+    ? addPhrase()
+    : updateExistingPhrase()
+
+
+  return phrasePromise
+    .then(checkCreationDate)
+
+
+  function addPhrase() {
+    const lists = [ list_id ]
+    const created = new Date()
+    // Use the integer _id as the key. A new _id will be used.
+    const data = { key: _id, text, hint, lists, created }
+
+    return new Phrase(data)
+      .save()
+      .then(filterFields)
       .catch(treatError)
-      .finally(proceed)
   }
 
-  function addPhrase({ list_id, key, text, hint }) {
-    const created = new Date()
-    // Convert string list_id to Object.Id
-    list_id = new mongoose.Types.ObjectId(list_id)
-    const lists = [ list_id ]
 
-    return new Promise(( resolve, reject ) => {
-      // Check if a phrase with this key already exists in
-      // this list
-      const query = {
-        lists: { $elemMatch: { $eq: list_id } },
-        key
-      }
-      Phrase.findOne(query)
-        .then(checkPhrase)
-        .catch(reject)
+  function updateExistingPhrase() {
+    const $set = { text, hint }
 
-      function checkPhrase(phrase) {
-        if (phrase) {
-          // Pretend this existing phrase was just created
-          treatPhrase(phrase)
-
-        } else {
-          // Create a new phrase with the given key
-          return new Phrase({ key, text, hint, created, lists })
-            .save()
-            .then(treatPhrase)
-            .then(checkCreationDate)
-            .catch(reject)
-        }
-
-        function treatPhrase(phrase) {
-          // Filter out fields that are not necessary
-          const { _id, key, text, hint } = phrase
-          const data = { list_id, key, _id, text, hint }
-
-          resolve(data)
-        }
-      }
-    })
+    return Phrase.findByIdAndUpdate(
+      _id,
+      { $set },
+      { new: true } // returns the updated document
+    )
+      .then(filterFields)
+      .catch(treatError)
+  }
 
 
-    /**
-     * Counts non-empty phrases in the list, and resets the
-     * creation date if there are now 21
-     */
-    function checkCreationDate(phrase) {
-      const query = {
-        lists: { $elemMatch: { $eq: list_id } },
-        text: { $ne: "" }
-      }
+  function filterFields(phrase) {
+    const { _id, key, text, hint } = phrase
+    const data = { list_id, _id, key, text, hint }
 
-      return Phrase.countDocuments(query)
-        .then(resetCreationDateIfNeeded) // output ignored
-        .catch(error => Promise.resolve(error))
-        .finally(() => Promise.resolve(phrase))
+    return Promise.resolve(data)
+  }
+
+
+  ////////////////////// COMPLETING A LIST //////////////////////
+
+
+  // Counts non-empty phrases in the list, and resets the
+  // creation date if there are now 21
+  function checkCreationDate(phrase) {
+    const query = {
+      lists: { $elemMatch: { $eq: list_id } },
+      text: { $ne: "" }
     }
+
+    Phrase.countDocuments(query)
+      .then(resetCreationDateIfNeeded) // output ignored
+      .catch(treatError)
+
+    // Always resolve with updated phrase, even if there
+    // is a counting error
+    return Promise.resolve(phrase)
 
 
     function resetCreationDateIfNeeded(count) {
       if (count < 21) {
-        return Promise.resolve()
+        return Promise.resolve() // nothing to do
       }
-      
+
       const $set = { created: new Date() }
       return List.findByIdAndUpdate(
         list_id,
         { $set },
         { new: true }
       )
-        .then(() => Promise.resolve())
-        .catch(error => Promise.resolve(error))
+        .then(() => Promise.resolve()) // just resolve
+        .catch(treatError)
     }
   }
 
 
-  // Update existing phrase
-  return Phrase.findByIdAndUpdate(
-    _id,
-    { $set: { text, hint } },
-    { new: true } // returns the updated document
-  )
-    .then(treatUpdate)
-    .catch(treatError)
-
-  function treatUpdate(phrase) {
-    const { _id, key, text, hint } = phrase
-    const data = { list_id, _id, key, text, hint }
-
-    // If phrase has no text tell frontend to decrement List.length
-    if (!text) {
-      data.length = -1
+  function treatError(reason) {
+    const error = {
+      reason,
+      input: { list_id, _id, text, hint },
+      status: 400 // Bad Request
     }
 
-    return Promise.resolve(data)
-  }
-
-
-  function treatSuccess(result) {
-    console.log("result", JSON.stringify(result, null, '  '));
-    return result
-    
-  }
-
-
-  function treatError(error) {
-    console.log("saveOrAddPhrase error", JSON.stringify(error, null, '  '));
-    
-    error = {
-      reason: `Phrase not saved: ${text}`,
-      status: 422 // Unprocessable Content
-    }
+    console.log(
+      "Error in savePhrase:\n",
+      JSON.stringify(error, null, '  ')
+    );
 
     return Promise.resolve(error)
   }

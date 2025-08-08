@@ -13,8 +13,8 @@ function cookieCheck(req, res) {
     sameSite: is_http ? "Lax" : "Strict"
   }
   res.cookie("check", "", cookie)
-  console.log("cookie", JSON.stringify(cookie, null, '  '));
-  console.log("res.cookie", JSON.stringify(res.cookie, null, '  '));
+  // console.log("cookie", JSON.stringify(cookie, null, '  '));
+  // console.log("res.cookie", JSON.stringify(res.cookie, null, '  '));
 
   res.json({ cookie: "sent" })
 }
