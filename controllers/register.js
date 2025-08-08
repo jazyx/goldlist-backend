@@ -44,12 +44,10 @@ function registerUser(req, res) {
     return Promise.resolve(error)
 
   } else {
-    const result = checkForExistingUserName()
+    return checkForExistingUserName()
       .then(checkForExistingUserID)
       // error will be { reason, solution, status }
       .catch(error => Promise.resolve(error))
-
-    return result // should be a Promise
   }
 
 
@@ -79,23 +77,16 @@ function registerUser(req, res) {
   /** Called with no argument if no User with user_name
    *  exists */
   function checkForExistingUserID() {
-    const result = User
+    return User
       .findOne({ user_id })
       .then(updateOrCreate)
-      .then(data => {
-        console.log("data", JSON.stringify(data, null, '  '));
-        return data
-      })
       .catch(error => Promise.reject(error))
 
-    return result // should be a Promise
 
     function updateOrCreate(user) {
-      const result = (user)
+      return (user)
         ? updateUser(user)
         : createNewUser()
-
-      return result // should be a Promise
     }
 
 

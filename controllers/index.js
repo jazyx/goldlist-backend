@@ -14,6 +14,10 @@
 const { cookieCheck } = require('./checkCookie')
 const { registerUser } = require('./register')
 const { getData } = require('./getUserData')
+const { saveOrAddPhrase } = require('./savePhrase')
+const { addNewList } = require('./addList')
+const { submitCompletedList} = require('./submitList')
+const { completeReview } = require('./submitReview')
 
 
 function checkCookie(req, res) {
@@ -27,10 +31,6 @@ function register(req, res) {
   console.log("register called req.body:", req.body)
   registerUser(req, res)
   .then(result => {
-    // result should be a Promise
-    if (result.lowercase) {
-      console.log("result.lowercase:", result.lowercase, result.user_name)
-    }
     respond(req, res, "/register", result)
   })
 }
@@ -40,29 +40,44 @@ function getUserData(req, res) {
   console.log("getUser called with:", req.body, req.session.user_id)
   getData(req, res)
     .then(result => {
-      // result should be a Promise
       respond(req, res, "/getUserData", result)
     })
 }
 
 
 function savePhrase(req, res) {
-
+  console.log("savePhrase called with:", req.body, req.session.user_id)
+  saveOrAddPhrase(req, res)
+    .then(result => {
+      respond(req, res, "/savePhrase", result)
+    })
 }
 
 
 function addList(req, res) {
-
+  console.log("addList called with:", req.body, req.session.user_id)
+  addNewList(req, res)
+    .then(result => {
+      respond(req, res, "/addList", result)
+    })
 }
 
 
 function submitList(req, res) {
-
+  console.log("submitList called with:", req.body, req.session.user_id)
+  submitCompletedList(req, res)
+    .then(result => {
+      respond(req, res, "/submitList", result)
+    })
 }
 
 
 function submitReview(req, res) {
-
+  console.log("submitReview called with:", req.body, req.session.user_id)
+  completeReview(req, res)
+    .then(result => {
+      respond(req, res, "/submitReview", result)
+    })
 }
 
 

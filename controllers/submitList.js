@@ -10,50 +10,40 @@
 const { mongoose, List } = require('../database')
 
 
-function submitList(req, res, next) {
+function submitCompletedList(req, res, next) {
   const _id = new mongoose.Types.ObjectId(req.body._id)
-
-
-  let status = 0
-  let message = {}
-
 
   const $set = {
     submitted: true
   }
-  List.findByIdAndUpdate(
+  return List.findByIdAndUpdate(
     _id,
     { $set },
     { new: true }
   )
     .then(treatSuccess)
     .catch(treatError)
-    .finally(proceed)
+  
 
 
-  // Handle response
   function treatSuccess({ _id, submitted }) {
-    Object.assign(message, { _id, submitted } )
+    return Promise.resolve( { _id, submitted } )
   }
 
 
   function treatError(error) {
-    console.log("Error in submitList:\n", req.body, error);
-    status = 500 // Server error
-    message.fail = error
-  }
-
-
-  function proceed() {
-    if (status) {
-      res.status(status)
+    console.log("submitCompletedList error", JSON.stringify(error, null, '  '));
+    
+    error = {
+      reason: `List not submitted: ${_id}`,
+      status: 422 // Unprocessable Content
     }
 
-    res.json(message)
+    return Promise.resolve(error)
   }
 }
 
 
 module.exports = {
-  submitList
+  submitCompletedList
 }

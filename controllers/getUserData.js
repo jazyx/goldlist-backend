@@ -3,9 +3,11 @@
  */
 
 
+const bcrypt = require('bcryptjs')
 const { User, List, Phrase } = require('../database')
 const { initializeUserData } = require('./initializeUserData.js')
 const { collectDataFor } = require('./collectDataFor.js')
+
 
 
 
@@ -42,8 +44,7 @@ function getData(req, res) {
 
 
   function findLoggedInUser(query) {
-    console.log("findLoggedInUser query:", query)
-    const selection = [ "user_name", "lists", "knots" ]
+    const selection = [ "user_name", "lists", "knots", "hash" ]
 
     return new Promise(( resolve, reject ) => {
       User.findOne(query).select(selection)
@@ -55,17 +56,24 @@ function getData(req, res) {
       // If there is an existing user with the UUID name, then use
       // that.
       function checkPassword(user) {
-        console.log("findLoggedInUser:", user)
+        console.log("findLoggedInUser:", user, bcrypt)
         if (user) {
+          if (password & user.hash) {
           bcrypt.compare(password, user.hash)
             .then(result => {
-              console.log(`${password} matches ${hash}`, result)
-              (match)
+              console.log(`${password} matches ${user.hash}`, result)
+              ;(result)
                 ? resolve(user)
                 : reject("Invalid username or password")
             })
+          } else {
+            console.log(`Can't compare "${password}" and "${user.hash}"`)
+            resolve()
+          }
         } else {
-          reject(`No user matching ${user_name} or ${email}`)
+          const message = `No user matching ${user_name} or ${email}`
+          console.log("bcrypt fail:", message)
+          reject(message)
         }
       }
     })
@@ -73,17 +81,30 @@ function getData(req, res) {
 
 
   function noRegisteredUserFound(state) {
-    console.log("state:", state)
+    // console.log("state:", state)
+    if (user_name || email) {
+      const error = {
+        reason: "Invalid username or password",
+        status: 403 // Forbidden
+      }
+
+      return Promise.resolve(error)
+    }
+    
     return treatUserID()
   }
+
 
   /**
    * If user exists, then it was identifed by user_name or email
    * and the password was correct
    */
-  function checkForUser(users) {
-    return (user.length)
-      ? collectDataFor(user[0]) // a registered user was found
+  function checkForUser(user) {
+    if (Array.isArray(user)) {
+      user = user[0]
+    }
+    return (user)
+      ? collectDataFor(user) // a registered user was found
       : treatUserID() // neither user_name nor email matched
   }
 
