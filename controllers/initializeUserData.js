@@ -23,7 +23,7 @@
 
 const { List, Phrase } = require('../database')
 const dummyData = require('./dummyData.json')
-const { DELAY, DAYS } = require('../../backend/constants')
+const { DELAY, DAYS } = require('../constants')
 const { formatUserData } = require('./formatUserData')
 const backDates = { // oldest to newest, so index is correct
   "verbs":   44,
