@@ -3,7 +3,7 @@
  * 
  * - checkCookie
  * - register
- * - getUserData
+ * - getGuestData
  * - savePhrase
  * - addList
  * - submitList
@@ -12,8 +12,9 @@
 
 
 const { cookieCheck } = require('./checkCookie')
+const { getDataByUserId } = require('./getGuestData')
+const { logUserIn } = require('./login')
 const { registerUser } = require('./register')
-const { getData } = require('./getUserData')
 const { saveOrAddPhrase } = require('./savePhrase')
 const { addNewList } = require('./addList')
 const { submitCompletedList} = require('./submitList')
@@ -25,6 +26,26 @@ function checkCookie(req, res) {
 }
 
 
+function getGuestData(req, res) {
+  console.log("getUser called with:", req.body, req.session.user_id)
+  getDataByUserId(req, res)
+    .then(result => {
+      respond(req, res, "/getGuestData", result)
+    })
+}
+
+
+function login(req, res) {
+  // result should be { user, lists, redos }
+  // error might be { reason, status }
+  console.log("login called req.body:", req.body)
+  logUserIn(req, res)
+  .then(result => {
+    respond(req, res, "/login", result)
+  })
+}
+
+
 function register(req, res) {
   // result should be { user, lists, redos }
   // error might be { reason, status }
@@ -33,15 +54,6 @@ function register(req, res) {
   .then(result => {
     respond(req, res, "/register", result)
   })
-}
-
-
-function getUserData(req, res) {
-  console.log("getUser called with:", req.body, req.session.user_id)
-  getData(req, res)
-    .then(result => {
-      respond(req, res, "/getUserData", result)
-    })
 }
 
 
@@ -117,8 +129,9 @@ function respond(req, res, endpoint, result) {
 
 module.exports = {
   checkCookie,
+  getGuestData,
+  login,
   register,
-  getUserData,
   savePhrase,
   addList,
   submitList,

@@ -16,7 +16,6 @@ const { collectDataFor } = require('./collectDataFor')
 
 
 function registerUser(req, res) {
-  const last_access = new Date()
   // Read user_id from httpOnly session cookie
   const user_id = req.session?.user_id || ""
   // Read connection details from req.body
@@ -35,20 +34,14 @@ function registerUser(req, res) {
       reason = "Username and password missing"
     }
 
-    // The request has been handled, so resolve it, but indicate
-    // that it failed
-    const error = {
-      reason,
-      status: 400 // Bad Request
-    }
-    return Promise.resolve(error)
-
-  } else {
-    return checkForExistingUserName()
-      .then(checkForExistingUserID)
-      // error will be { reason, solution, status }
-      .catch(error => Promise.resolve(error))
+    return treatError({ reason })
   }
+
+
+  return checkForExistingUserName()
+    .then(checkForExistingUserID)
+    // error will be { reason, solution, status }
+    .catch(treatError)
 
 
   function checkForExistingUserName() {
@@ -63,8 +56,9 @@ function registerUser(req, res) {
         const error = {
           reason: `The username "${user_name}" already exists`,
           solution: "login",
-          status: 400 // Bad Request
+          status: 406 // Not Acceptable
         }
+
         return Promise.reject(error)
 
       } else {
@@ -74,8 +68,7 @@ function registerUser(req, res) {
   }
 
 
-  /** Called with no argument if no User with user_name
-   *  exists */
+  /* Called with no argument if no User with user_name exists */
   function checkForExistingUserID() {
     return User
       .findOne({ user_id })
@@ -98,11 +91,7 @@ function registerUser(req, res) {
 
       return user.save()
         .then(collectDataFor)
-        .catch(error => {
-          console.log("collectDataFor error", JSON.stringify(error, null, '  '));
-          
-          Promise.reject(error)
-      })
+        .catch(treatError)
     }
 
 
@@ -116,6 +105,23 @@ function registerUser(req, res) {
           Promise.resolve(error)
         })
     }
+  }
+
+
+  function treatError(error) {
+    // The request has been handled, so resolve it, but indicate
+    // that it failed
+    if (typeof error !== "object" || !error.reason) {
+      error = {
+        reason: error
+      }
+    }
+
+    if (!error.status) {
+      error.status = 400 // Bad Request
+    }
+
+    return Promise.resolve(error)
   }
 }
 

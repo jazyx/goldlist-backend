@@ -1,7 +1,7 @@
 /**
  * backend/controllers/userMethods.js
  *
- * getUserData:
+ * getGuestData:
  *   1. Checks if a User record exists for user_name/email +
  *   password, or failing that user_name+user_id. If not...
  *   2. Creates a User record
@@ -62,7 +62,7 @@ const ACTIVE_AGE = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
 
 
 
-function getUserData(req, res) {
+function getGuestData(req, res) {
   const last_access = new Date()
   const user_id = req.session?.user_id || ""
   const { user_name, email, password } = req.body
@@ -367,7 +367,7 @@ function collectDataFor(user) {
 
 
   function treatError(error) {
-    console.log("Error in getUserData:\nmessage", error.message, "\nstack:", error.stack, "\nreq.body\n", JSON.stringify(req.body, null, '  '));
+    console.log("Error in getGuestData:\nmessage", error.message, "\nstack:", error.stack, "\nreq.body\n", JSON.stringify(req.body, null, '  '));
 
     status = status || 500 // Server error
     message.fail = error
@@ -385,6 +385,6 @@ function collectDataFor(user) {
 
 
 module.exports = {
-  getUserData,
+  getGuestData,
   collectDataFor
 }

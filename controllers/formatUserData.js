@@ -3,7 +3,7 @@
  * 
  * formatUserData is called by
  * <= initializeUserData()
- * <= createNewUser() in registerUser
+ * <= createNewUser() in connectUser
  * <= register() in index.js
  */
 

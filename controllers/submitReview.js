@@ -77,7 +77,7 @@ function completeReview (req, res, next) {
     const { list } = result
     const { remain, user_id } = list
 
-    if (remain < 8) {
+    if (Number(remain) && remain < 8) {
       combineLists(user_id)
         .then(list => console.log(
           "New combined list",

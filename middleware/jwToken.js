@@ -40,12 +40,14 @@ const getToken = ( payload, options = {} ) => {
 const checkPass = (req, res, next) => {
   const pass = req.session?.pass
   const referer = req.headers.referer
+  const path = req.path
+  console.log("checkPass path:", path)
 
   let status = 0
   let message = ""
 
   if (is_dev || !pass) {
-    if (is_dev) {
+    if (is_dev && referer) {
       console.log(`🤚 DEV PASS ${req.path} REQUEST FOR ${referer}`)
 
     } else if (!pass) {
@@ -62,9 +64,11 @@ const checkPass = (req, res, next) => {
   function treatPass(error, payload) {
     const regex = new RegExp(payload)
 
-    const sendHome = 
-       error                // the JWT token was invalid
-    || !regex.test(referer) // referer undefined or invalid
+    const sendHome =
+       referer // ⚠️ client may maliciously set no-referer
+    && ( error // the JWT token was invalid
+      || !regex.test(referer) // referer undefined or invalid
+    )
 
     if (sendHome) {
       // Ignore API request: respond with index.html file 
