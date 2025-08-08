@@ -2,7 +2,6 @@
  * backend/controllers/checkCookie.js
  */
 
-// const is_dev = process.env.IS_DEV === "true"
 const is_http = process.env.HTTP === "true"
 
 function cookieCheck(req, res) {
