@@ -19,15 +19,12 @@ const { mongoose, Phrase, List } = require('../database')
 const { combineLists } = require('./combineLists')
 
 
-function submitReview (req, res, next) {
+function completeReview (req, res, next) {
   const { list_id, reviewed } = req.body
   // console.log("list_id:", list_id)
   // console.log("reviewed:", reviewed)
 
   // {"list_id":"6887a2639bfb4c75b41073fd","reviewed":[{"_id":"6887a2709bfb4c75b4107403","retained":true},{"_id":"6887a2729bfb4c75b4107407","retained":true},{"_id":"6887a2739bfb4c75b410740b","retained":true},{"_id":"6887a2749bfb4c75b410740f","retained":true},{"_id":"6887a2769bfb4c75b4107413","retained":true},{"_id":"6887a2779bfb4c75b4107417","retained":true,"limit":true},{"_id":"6887a2789bfb4c75b410741b","limit":true}]}
-
-  let status = 0
-  let message = {}
 
   const promises = reviewed.map(({ _id, retained, limit }) => {
     return new Promise(( resolve, reject ) => {
@@ -51,12 +48,10 @@ function submitReview (req, res, next) {
   })
 
 
-  Promise.all(promises)
+  return Promise.all(promises)
     .then(updateReviewsAndRemain)
     .then(combineListsIfNeeded)
-    .then(treatSuccess)
     .catch(treatError)
-    .finally(proceed)
 
 
   function updateReviewsAndRemain(reviewed) {
@@ -94,29 +89,20 @@ function submitReview (req, res, next) {
     return Promise.resolve(result)
   }
 
-  // Handle response
-  function treatSuccess(result) {
-    Object.assign(message, result )
-  }
-
 
   function treatError(error) {
-    console.log("Error in savePhrase:\n", req.body, error);
-    status = 500 // Server error
-    message.fail = error
-  }
-
-
-  function proceed() {
-    if (status) {
-      res.status(status)
-    }
+    console.log("completeReview error", JSON.stringify(error, null, '  '));
     
-    res.json(message)
+    error = {
+      reason: `Review not submitted: ${list_id}`,
+      status: 422 // Unprocessable Content
+    }
+
+    return Promise.resolve(error)
   }
 }
 
 
 module.exports = {
-  submitReview
+  completeReview
 }

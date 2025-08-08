@@ -5,7 +5,7 @@
 const is_dev = process.env.IS_DEV === "true"
 
 
-function checkCookie(req, res) {
+function cookieCheck(req, res) {
   // Send a non-httpOnly cookie for  the front end to check for
   // No maxAge or expiry means that it is a session cookie.
   const cookie = {
@@ -21,5 +21,5 @@ function checkCookie(req, res) {
 }
 
 module.exports = {
-  checkCookie
+  cookieCheck
 }

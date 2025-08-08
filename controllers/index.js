@@ -1,18 +1,123 @@
 /**
- * backend/controllers/index.js
+ * backend/controllers/endpoints.js
+ * 
+ * - checkCookie
+ * - register
+ * - getUserData
+ * - savePhrase
+ * - addList
+ * - submitList
+ * - submitReview
  */
 
 
-const { checkCookie } = require('./checkCookie')
-const { getUserData } = require('./userMethods')
-const { savePhrase } = require('./savePhrase')
-const { addList } = require('./addList')
-const { submitList } = require('./submitList')
-const { submitReview } = require('./submitReview')
+const { cookieCheck } = require('./checkCookie')
+const { registerUser } = require('./register')
+const { getData } = require('./getUserData')
+const { saveOrAddPhrase } = require('./savePhrase')
+const { addNewList } = require('./addList')
+const { submitCompletedList} = require('./submitList')
+const { completeReview } = require('./submitReview')
+
+
+function checkCookie(req, res) {
+  cookieCheck(req, res)
+}
+
+
+function register(req, res) {
+  // result should be { user, lists, redos }
+  // error might be { reason, status }
+  console.log("register called req.body:", req.body)
+  registerUser(req, res)
+  .then(result => {
+    respond(req, res, "/register", result)
+  })
+}
+
+
+function getUserData(req, res) {
+  console.log("getUser called with:", req.body, req.session.user_id)
+  getData(req, res)
+    .then(result => {
+      respond(req, res, "/getUserData", result)
+    })
+}
+
+
+function savePhrase(req, res) {
+  console.log("savePhrase called with:", req.body, req.session.user_id)
+  saveOrAddPhrase(req, res)
+    .then(result => {
+      respond(req, res, "/savePhrase", result)
+    })
+}
+
+
+function addList(req, res) {
+  console.log("addList called with:", req.body, req.session.user_id)
+  addNewList(req, res)
+    .then(result => {
+      respond(req, res, "/addList", result)
+    })
+}
+
+
+function submitList(req, res) {
+  console.log("submitList called with:", req.body, req.session.user_id)
+  submitCompletedList(req, res)
+    .then(result => {
+      respond(req, res, "/submitList", result)
+    })
+}
+
+
+function submitReview(req, res) {
+  console.log("submitReview called with:", req.body, req.session.user_id)
+  completeReview(req, res)
+    .then(result => {
+      respond(req, res, "/submitReview", result)
+    })
+}
+
+
+// Handle response
+function respond(req, res, endpoint, result) {
+  const { status } = result // undefined if no error
+  const message = {}
+
+  if (result.status) {
+     treatError(result)
+  } else {
+    treatSuccess(result)
+  }
+  proceed()
+
+
+  function treatError(error) {
+    console.log(`Error in ${endpoint}:\n`, req.body, error);
+    message.fail = error
+  }
+
+
+  function treatSuccess(phrase) {
+    Object.assign(message, phrase )
+  }
+
+
+  function proceed() {
+    if (status) {
+      res.status(status)
+    }
+
+    res.json(message)
+  }
+}
 
 
 module.exports = {
   checkCookie,
+  register,
   getUserData,
   savePhrase,
   addList,

@@ -21,8 +21,10 @@
  */
 
 
-const { User, List, Phrase } = require('../database')
+const { List, Phrase } = require('../database')
 const dummyData = require('./dummyData.json')
+const { DELAY, DAYS } = require('../../backend/constants')
+const { formatUserData } = require('./formatUserData')
 const backDates = { // oldest to newest, so index is correct
   "verbs":   44,
   "food":    43,
@@ -32,38 +34,14 @@ const backDates = { // oldest to newest, so index is correct
   "animals":  0
 }
 
-const DELAY = 14 // delay between each review
-const DAYS  = 24 * 60 * 60 * 1000 // milliseconds in 24 hours
 
-
-function initializeUserData(userData) {
-  // { user_id
-  //   user_name*,
-  //   email,
-  //   hash,
-  //   start_date+,
-  //   last_access,
-  //   lists, <<< will be set here
-  //   knots
-  // }
-  return new Promise(( resolve, reject ) => {
-    userData.lists = 5
-    const now = new Date().getTime()
-
-    new User(userData)
-      .save()
-      .then(user => makeLists( user, now ))
-      .then(resolve)
-      .catch(reject)
-  })
-}
-
-
-function makeLists( user, now ) {
+function initializeUserData(user) {
+  const now = new Date().getTime()
   const { _id: user_id } = user
 
   const entries = Object.entries(backDates)
 
+  // Create a list for each of the objects in backDates...
   const promises = entries.map(([ key, backdate ], index) => {
     const { phrases, data } = getPhrasesData(
       user_id, key, now, backdate, index
@@ -72,6 +50,7 @@ function makeLists( user, now ) {
     const ago = (DELAY * ( reviews - 1 )) * DAYS
     const retained = new Date(now - ago)
 
+    // ... along with all the phrases for the list
     return new List(data)
       .save()
       .then(list => makePhrases({
@@ -84,19 +63,18 @@ function makeLists( user, now ) {
       .catch(error => Promise.reject(error))
   })
 
-  return Promise.all(promises)
-    .then(redos => Promise.resolve({ redos, user }))
-    .catch(error => {
-      console.log("LISTS error", JSON.stringify(error, null, '  '))
-      return error
-    })
+  const result = Promise.all(promises)
+    .then(redos => formatUserData({ user, redos }))
+    .catch(treatError)
+
+  return result // should be a Promise
 }
 
 
-function makePhrases({ 
+function makePhrases({
   list,
   created,
-  retained, 
+  retained,
   phrases,
 }) {
   const { _id: list_id } = list
@@ -156,6 +134,18 @@ function getPhrasesData(user_id, key, now, backdate, index) {
   }
 
   return { phrases, data }
+}
+
+
+function treatError(error) {
+  console.log("INITIALIZE_USER_DATA error", JSON.stringify(error, null, '  '))
+
+  const errorData = {
+    reason: error,
+    status: 405 // Method Not Allowed
+  }
+
+  return Promise.resolve(errorData)
 }
 
 

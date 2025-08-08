@@ -10,23 +10,16 @@
 const { mongoose, User, List } = require('../database')
 
 
-function addList(req, res) {
+function addNewList(req, res) {
   const { _id, index } = req.body
   const user_id = new mongoose.Types.ObjectId(_id)
 
 
-  let status = 0
-  let message = {}
-
-
   // Create a new list for this user
-  new List({ user_id, index })
+  return new List({ user_id, index })
     .save()
     .then(treatNewList)
     .then(updateUser)
-    .then(treatSuccess)
-    .catch(treatError)
-    .finally(proceed)
 
 
   // Handle response
@@ -50,31 +43,9 @@ function addList(req, res) {
         .catch(reject)
     })
   }
-
-
-  // Handle response
-  function treatSuccess(data) {
-    Object.assign(message, data )
-  }
-
-
-  function treatError(error) {
-    console.log("Error in addList:\n", req.body, error);
-    status = 500 // Server error
-    message.fail = error
-  }
-
-
-  function proceed() {
-    if (status) {
-      res.status(status)
-    }
-
-    res.json(message)
-  }
 }
 
 
 module.exports = {
-  addList
+  addNewList
 }

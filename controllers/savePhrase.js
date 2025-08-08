@@ -19,15 +19,10 @@
 const { mongoose, Phrase, List } = require('../database')
 
 
-function savePhrase(req, res) {
+function saveOrAddPhrase(req, res) {
   // The list_id will be linked to a given user, and _id (if it
   // is not a number, will already be linked to that list.)
   const { list_id, _id, text, hint } = req.body
-
-
-  let status = 0
-  let message = {}
-
 
   // New phrase to add. Use the integer _id as the key.
   if (_id === Number(_id)) {
@@ -61,7 +56,7 @@ function savePhrase(req, res) {
 
         } else {
           // Create a new phrase with the given key
-          new Phrase({ key, text, hint, created, lists })
+          return new Phrase({ key, text, hint, created, lists })
             .save()
             .then(treatPhrase)
             .then(checkCreationDate)
@@ -89,7 +84,7 @@ function savePhrase(req, res) {
         text: { $ne: "" }
       }
 
-      Phrase.countDocuments(query)
+      return Phrase.countDocuments(query)
         .then(resetCreationDateIfNeeded) // output ignored
         .catch(error => Promise.resolve(error))
         .finally(() => Promise.resolve(phrase))
@@ -102,7 +97,7 @@ function savePhrase(req, res) {
       }
       
       const $set = { created: new Date() }
-      List.findByIdAndUpdate(
+      return List.findByIdAndUpdate(
         list_id,
         { $set },
         { new: true }
@@ -114,15 +109,13 @@ function savePhrase(req, res) {
 
 
   // Update existing phrase
-  Phrase.findByIdAndUpdate(
+  return Phrase.findByIdAndUpdate(
     _id,
     { $set: { text, hint } },
     { new: true } // returns the updated document
   )
     .then(treatUpdate)
-    .then(treatSuccess)
     .catch(treatError)
-    .finally(proceed)
 
   function treatUpdate(phrase) {
     const { _id, key, text, hint } = phrase
@@ -137,29 +130,26 @@ function savePhrase(req, res) {
   }
 
 
-  // Handle response
-  function treatSuccess(phrase) {
-    Object.assign(message, phrase )
+  function treatSuccess(result) {
+    console.log("result", JSON.stringify(result, null, '  '));
+    return result
+    
   }
 
 
   function treatError(error) {
-    console.log("Error in savePhrase:\n", req.body, error);
-    status = 500 // Server error
-    message.fail = error
-  }
-
-
-  function proceed() {
-    if (status) {
-      res.status(status)
+    console.log("saveOrAddPhrase error", JSON.stringify(error, null, '  '));
+    
+    error = {
+      reason: `Phrase not saved: ${text}`,
+      status: 422 // Unprocessable Content
     }
 
-    res.json(message)
+    return Promise.resolve(error)
   }
 }
 
 
 module.exports = {
-  savePhrase
+  saveOrAddPhrase
 }
