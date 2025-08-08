@@ -1,5 +1,5 @@
 /**
- * backend/controllers/getGuestData.js
+ * backend/controllers/guest.js
  */
 
 
@@ -40,7 +40,7 @@ function getDataByUserId(req, res) {
       status: 400 // Bad Request
     }
 
-    console.log("getGuestData createUser error", JSON.stringify(error, null, '  '));
+    console.log("guest createUser error", JSON.stringify(error, null, '  '));
 
     return Promise.resolve(error)
   }

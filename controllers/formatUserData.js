@@ -1,10 +1,7 @@
 /**
  * backend/controllers/formatUserData.js
  * 
- * formatUserData is called by
- * <= initializeUserData()
- * <= createNewUser() in connectUser
- * <= register() in index.js
+ * formatUserData is called by initializeUserData()
  */
 
 

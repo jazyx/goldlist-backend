@@ -7,8 +7,8 @@ const router = require('express').Router()
 const { checkPass } = require('./middleware')
 const {
   checkCookie,
-  getGuestData,
-  register, 
+  guest,
+  register,
   login,
   savePhrase,
   addList,
@@ -23,7 +23,7 @@ router.use(checkPass)
 
 
 router.get("/checkCookie", checkCookie)
-router.post("/getGuestData", getGuestData)
+router.post("/guest", guest)
 router.post("/register", register)
 router.post("/login", login)
 router.post("/savePhrase", savePhrase)

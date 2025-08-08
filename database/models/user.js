@@ -28,6 +28,7 @@ const schema = new Schema({
 });
 
 
+// Store user_name case-sensitive, with a lowercase version
 schema.pre("save", function(next) {
   const hasUser_name = this.user_name
   const user_nameHasChanged = this.isModified('user_name') // ""?
@@ -38,9 +39,19 @@ schema.pre("save", function(next) {
 });
 
 
-// Pre-save hook to hash the password before saving the user
+// Store email always in lowercase
+schema.pre("save", function(next) {
+  const hasEmail = this.email
+  const emailHasChanged = this.isModified('email') // ""?
+  if (hasEmail || emailHasChanged) {
+    this.email = this.email.toLowerCase();
+  }
+  next();
+});
+
+
+// Hash password before saving the user, if it is modified or new
 schema.pre('save', async function(next) {
-  // Hash the password only if it is modified or new
   const hasChanged = this.isModified('hash')
   if (hasChanged) {
     try {

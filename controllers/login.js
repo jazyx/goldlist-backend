@@ -7,21 +7,29 @@
  * - If not, return a resolved Promise with an error
  */
 
+
+const bcrypt = require('bcryptjs');
 const { User } = require('../database')
 const { collectDataFor } = require('./collectDataFor')
 
 
 
 function logUserIn(req, res) {
-  // const last_access = new Date()
   // Read connection details from req.body
   const { user_name, email, password } = req.body
+  // Use case-insensitive search for contact, and force to strings
+  const lowermail = (email || "").toLowerCase()
+  const lowercase = (user_name || "").toLowerCase()
 
 
   // Allow user to log in with either username or email
   const promises = [
-    findLoggedInUser({ email }),
-    findLoggedInUser({ user_name })
+    findLoggedInUser({
+      $and: [
+        { email: { $ne: "" } },
+        { email: lowermail },
+    ]}), // don't match Users with no email
+    findLoggedInUser({ lowercase })
   ]
 
 
@@ -40,7 +48,8 @@ function logUserIn(req, res) {
         .catch(reject)
 
       function checkPassword(user) {
-        console.log("findLoggedInUser:", user, bcrypt)
+        console.log("findLoggedInUser:", query, user, bcrypt)
+
         if (user) {
           bcrypt.compare(password, user.hash)
             .then(result => {

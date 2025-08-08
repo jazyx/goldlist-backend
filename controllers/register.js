@@ -20,6 +20,7 @@ function registerUser(req, res) {
   const user_id = req.session?.user_id || ""
   // Read connection details from req.body
   const { user_name, email, password } = req.body
+  const lowername = (user_name || "").toLowerCase
 
 
   // Check if user_name and password are both valid
@@ -40,14 +41,14 @@ function registerUser(req, res) {
 
   return checkForExistingUserName()
     .then(checkForExistingUserID)
+    .then(resetUserIDCookie)
     // error will be { reason, solution, status }
     .catch(treatError)
 
 
   function checkForExistingUserName() {
-    const lowercase = user_name.toLowerCase()
     return User
-      .findOne({ lowercase })
+      .findOne({ lowercase: lowername })
       .then(refuseDuplicate)
       .catch(error => Promise.reject(error))
 
@@ -68,10 +69,22 @@ function registerUser(req, res) {
   }
 
 
-  /* Called with no argument if no User with user_name exists */
+   /**
+    * Called with no argument if no User with user_name exists.
+    * Check if there is a User record with the given user_id
+    * that does not have a name yet.
+    */
   function checkForExistingUserID() {
+    const query = { $and: [
+      { user_id },
+      { $or: [
+        { lowercase: { $exists: false } },
+        { lowercase: { $eq: "" } },
+        { lowercase: { $type: "null" } },
+      ]}
+    ]}
     return User
-      .findOne({ user_id })
+      .findOne(query)
       .then(updateOrCreate)
       .catch(error => Promise.reject(error))
 
@@ -105,6 +118,16 @@ function registerUser(req, res) {
           Promise.resolve(error)
         })
     }
+  }
+
+
+  /**
+   * Ensure that any user who logs in as Guest in the future
+   * gets a new User record.
+   */
+  function resetUserIDCookie(data) {    
+    req.session.user_id = ""
+    return Promise.resolve(data)
   }
 
 

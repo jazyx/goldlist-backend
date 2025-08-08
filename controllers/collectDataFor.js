@@ -214,7 +214,7 @@ function collectDataFor(user) {
 
 
   function treatError(error) {
-    console.log("Error in getGuestData:\nmessage", error);
+    console.log("Error in collectDataFor:\nmessage", error);
 
     error = {
       reason: error,
