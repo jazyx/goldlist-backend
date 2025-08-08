@@ -41,16 +41,20 @@ const checkPass = (req, res, next) => {
   const pass = req.session?.pass
   const referer = req.headers.referer
   const path = req.path
-  console.log("checkPass path:", path)
+  // console.log("checkPass path:", path)
+
+  const pathRegex = /\/(add|rev)(\/[0-9-])?/
+  const notAPI = pathRegex.test(path)
+  // console.log("notAPI:", notAPI, path)
 
   let status = 0
   let message = ""
 
-  if (is_dev || !pass) {
+  if (is_dev || !pass || notAPI) {
     if (is_dev && referer) {
       console.log(`🤚 DEV PASS ${req.path} REQUEST FOR ${referer}`)
 
-    } else if (!pass) {
+    } else if (notAPI || !pass) {
       // Ignore API request: serve home page + cookie instead
       return res.redirect("/")
     }

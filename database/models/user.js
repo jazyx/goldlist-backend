@@ -18,7 +18,7 @@ const { SALT } = require('../../constants')
 const schema = new Schema({
   user_id:     { type: String },
   user_name:   { type: String, trim: true },
-  lowercase:   { type: String, lowercase: true, unique: true },
+  lowercase:   { type: String, lowercase: true },
   email:       { type: String },
   hash:        { type: String },
   start_date:  { type: Date, default: new Date() },

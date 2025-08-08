@@ -48,8 +48,6 @@ function logUserIn(req, res) {
         .catch(reject)
 
       function checkPassword(user) {
-        console.log("findLoggedInUser:", query, user, bcrypt)
-
         if (user) {
           bcrypt.compare(password, user.hash)
             .then(result => {
