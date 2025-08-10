@@ -193,9 +193,7 @@ function collectDataFor(user) {
       user_name,
       email,
       start_date,
-      last_access,
       lists: total,
-      knots,
       limitState
     } = user
     user = {
@@ -203,9 +201,7 @@ function collectDataFor(user) {
       user_name,
       email,
       start_date,
-      last_access,
       lists: total,
-      knots,
       limitState
     }
 

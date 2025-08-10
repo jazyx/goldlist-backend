@@ -40,7 +40,14 @@ function logUserIn(req, res) {
 
 
   function findLoggedInUser(query) {
-    const selection = [ "user_name", "lists", "knots", "hash" ]
+    const selection = [
+      "user_name",
+      "email",
+      "startDate",
+      "lists",
+      "limitState",
+      "hash"
+    ]
 
     return new Promise(( resolve, reject ) => {
       User.findOne(query).select(selection)
