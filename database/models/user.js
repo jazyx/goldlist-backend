@@ -24,7 +24,8 @@ const schema = new Schema({
   start_date:  { type: Date, default: new Date() },
   last_access: { type: Date, default: new Date() },
   lists:       { type: Number, default: 0 },
-  knots:       { type: Number, default: 0 }
+  knots:       { type: Number, default: 0 },
+  limitState:  { type: String, default: "mix" }
 });
 
 

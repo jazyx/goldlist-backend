@@ -13,7 +13,8 @@ const {
   savePhrase,
   addList,
   submitList,
-  submitReview
+  submitReview,
+  setPreferences
 } = require('./controllers')
 
 
@@ -30,6 +31,7 @@ router.post("/savePhrase", savePhrase)
 router.post("/addList", addList)
 router.post("/submitList", submitList)
 router.post("/submitReview", submitReview)
+router.post("/setPreferences", setPreferences)
 
 
 module.exports = router

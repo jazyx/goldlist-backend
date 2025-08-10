@@ -191,18 +191,22 @@ function collectDataFor(user) {
     const {
       _id,
       user_name,
+      email,
       start_date,
       last_access,
       lists: total,
-      knots
+      knots,
+      limitState
     } = user
     user = {
       _id,
       user_name,
+      email,
       start_date,
       last_access,
       lists: total,
-      knots
+      knots,
+      limitState
     }
 
     return {

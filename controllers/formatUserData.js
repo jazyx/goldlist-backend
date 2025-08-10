@@ -46,17 +46,26 @@ function formatUserData({ user, redos }) {
     }
 
     // Ignore user_id, last_access, knots and administrivia
-    const { user_name, email, start_date, lists } = user
+    const {
+      _id,
+      user_name,
+      email,
+      start_date,
+      lists,
+      limitState
+    } = user
 
     // Ignore redos with less than 8 phrases
     redos = redos.filter( list => list.remain > 7 )
 
     const data = {
       user: {
+        _id,
         user_name,
         email,
         start_date,
-        lists
+        lists,
+        limitState
       },
       lists: active,
       redos

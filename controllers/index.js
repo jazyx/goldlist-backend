@@ -19,6 +19,7 @@ const { saveOrAddPhrase } = require('./savePhrase')
 const { addNewList } = require('./addList')
 const { submitCompletedList} = require('./submitList')
 const { completeReview } = require('./submitReview')
+const { savePreferences } = require('./setPreferences')
 
 
 function checkCookie(req, res) {
@@ -89,6 +90,15 @@ function submitReview(req, res) {
 }
 
 
+function setPreferences(req, res) {
+  // console.log("setPreferences called with:", req.body, req.session.user_id)
+  savePreferences(req, res)
+    .then(result => {
+      respond(req, res, "/setPreferences", result)
+    })
+}
+
+
 // Handle response
 function respond(req, res, endpoint, result) {
   const { status } = result // undefined if no error
@@ -132,5 +142,6 @@ module.exports = {
   savePhrase,
   addList,
   submitList,
-  submitReview
+  submitReview,
+  setPreferences
 }
