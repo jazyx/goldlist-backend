@@ -66,15 +66,14 @@ function completeReview (req, res, next) {
           const { _id, user_id, index, reviews, remain } = result
           const list = { _id, user_id, index, reviews, remain }
 
-          resolve({ list, reviewed })
+          resolve(list)
         })
         .catch(reject)
     })
   }
 
 
-  function combineListsIfNeeded(result) {
-    const { list } = result
+  function combineListsIfNeeded(list) {
     const { remain, user_id } = list
 
     if (Number(remain) && remain < 8) {
@@ -86,7 +85,7 @@ function completeReview (req, res, next) {
         .catch(message => console.log(message))
     }
     // Always resolve, even if no lists were combined
-    return Promise.resolve(result)
+    return Promise.resolve(list)
   }
 
 
