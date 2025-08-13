@@ -50,14 +50,14 @@ if (is_dev) {
   server.use(require('cors')(options))
 }
 
-server.options('*', (req, res) => {
-  console.log("Preflight OPTIONS request detected", req.method);
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.send();
-});
+// server.options('*', (req, res) => {
+//   console.log("Preflight OPTIONS request detected", req.method);
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   res.send();
+// });
 
 server.use(express.urlencoded({ extended: false }));
 server.use(express.json());
