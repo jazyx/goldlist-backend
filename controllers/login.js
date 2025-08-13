@@ -58,7 +58,6 @@ function logUserIn(req, res) {
         if (user) {
           bcrypt.compare(password, user.hash)
             .then(result => {
-              // console.log(`${password} matches ${user.hash}`, result)
               ;(result)
                 ? resolve(user)
                 : reject()
