@@ -25,7 +25,9 @@ const schema = new Schema({
   last_access: { type: Date, default: new Date() },
   lists:       { type: Number, default: 0 },
   knots:       { type: Number, default: 0 },
-  limitState:  { type: String, default: "mix" }
+  limitState:  { type: String, default: "mix" },
+  daysDelay:   { type: Number, default: 14 },
+  phraseCount: { type: Number, default: 21 }
 });
 
 

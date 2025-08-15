@@ -42,6 +42,7 @@ const schema = new Schema({
   index:     { type: Number, default: 0 },
   created:   { type: Date, default: new Date() },
   reviews:   { type: Number, default: 1 },
+  total:     { type: Number, default: 21 },
   remain:    { type: Number, default: 21 },
   submitted: { type: Boolean }
 });

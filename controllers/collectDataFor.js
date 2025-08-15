@@ -194,7 +194,9 @@ function collectDataFor(user) {
       email,
       start_date,
       lists: total,
-      limitState
+      limitState,
+      daysDelay,
+      phraseCount
     } = user
     user = {
       _id,
@@ -202,7 +204,9 @@ function collectDataFor(user) {
       email,
       start_date,
       lists: total,
-      limitState
+      limitState,
+      daysDelay,
+      phraseCount
     }
 
     return {

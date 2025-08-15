@@ -52,7 +52,9 @@ function formatUserData({ user, redos }) {
       email,
       start_date,
       lists,
-      limitState
+      limitState,
+      daysDelay,
+      phraseCount
     } = user
 
     // Ignore redos with less than 8 phrases
@@ -65,7 +67,9 @@ function formatUserData({ user, redos }) {
         email,
         start_date,
         lists,
-        limitState
+        limitState,
+        daysDelay,
+        phraseCount
       },
       lists: active,
       redos
