@@ -31,7 +31,7 @@ const schema = new Schema({
   hint:     { type: String },
   created:  { type: Date, default: new Date() },
   retained: { type: Date },
-  limit:    { type: Boolean }
+  limit:    { type: Boolean } // is this set per phrase?
 });
 
 const Phrase = model("Phrase", schema);

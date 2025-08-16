@@ -1,5 +1,8 @@
 /**
  * backend/controllers/collectDataFor.js
+ *
+ * Called by register (when a Guest account is converted) and by
+ * login.
  */
 
 
@@ -20,17 +23,12 @@ function collectDataFor(user) {
     .catch(treatError)
 
 
-  // function updateLastAccess(user) {
-  //   return new Promise(( resolve, reject ) => {
-  //     user.last_access = new Date()
-  //     user.save()
-  //       .then(resolve)
-  //       .catch(reject)
-  //   })
-  // }
-
-
   function getActiveLists(user) {
+    // Find all lists that have not yet been completed or which
+    // were completed less than ACTIVE_AGE (6 hours) ago. There
+    // may be any number of these, but the user can simply click
+    // Submit List to make them go away... or review each one in
+    // detail first.
     const { _id: user_id, lists: index } = user
     const selection = ["index", "created", "remain", "total" ]
     const recently = new Date(Date.now() - ACTIVE_AGE);
@@ -85,8 +83,11 @@ function collectDataFor(user) {
     }
 
     const promises = lists.map( list => {
+      // Get all the phrases in the given list, sorted by key
+
       const { _id, index, created, remain, total } = list
       const selection = [ "text", "hint" ]
+      // Phrases in active lists are neither limit nor retained
 
       return new Promise(( resolve, reject ) => {
         const query = { lists: { $elemMatch: { $eq: _id } } }
@@ -117,45 +118,63 @@ function collectDataFor(user) {
 
 
   function getReviewLists({ user, lists }) {
-    const { _id: user_id } = user
+    const { _id: user_id, daysDelay } = user
 
-    // Create $expr to find list which...
-    // 1. Are older than (today - List.reviews * DELAY days)
+    // Create $expr to find lists which...
+    // 1. Are older than (today - List.reviews * daysDelay)
+    // 2. Contain more than List.remain / 3 unretained phrases
+    // (21 —> 7, 15 —> 5, 10 —> 3)
     const now = new Date()
+
     const $expr = {
-      $lt: [
-        "$created",
+      $and: [
         {
-          $dateSubtract: {
-            startDate: now,
-            unit: "day",
-            amount: { $multiply: ["$reviews", DELAY] },
-          }
+          $gt: [
+            "$remain",
+            { $divide: ["$total", 3] }
+          ]
+        },
+        {
+          $lt: [
+            "$created",
+            {
+              $dateSubtract: {
+                startDate: now,
+                unit: "day",
+                amount: {
+                  $multiply: ["$reviews", daysDelay]
+                }
+              }
+            }
+          ]
         }
       ]
     }
-    // 2. Contain more than REMAIN unretained phrases
-    const remain = { $gt: REMAIN }
-    // 3. Is not an old but still active list
+
+        // 3. Is not an old but still active list
     const index = { $ne: user.lists }
 
     const $match = {
       user_id,
       index,
-      remain,
       $expr
     }
     const $project = {
-      "index":   1,
-      "created": 1,
-      "reviews": 1,
-      "remain":  1
+      index:   1,
+      created: 1,
+      reviews: 1,
+      remain:  1
     }
+    const $sort = { "created": -1 } // newest to oldest
+    const $limit = 3
+
 
     return new Promise(( resolve, reject ) => {
       List.aggregate([
         { $match },
-        { $project }
+        { $project },
+        { $sort },
+        { $limit }
       ])
         .then(redos => {
           resolve({ user, lists, redos })
