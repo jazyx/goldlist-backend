@@ -2,6 +2,26 @@
   "__endonym__": "Français",
   "choose-language": "Choisissez votre langue",
   "use-method": "Utiliser la méthode « Gold List »",
+  "profile": "Profile pour {{user_name}}",
+  "prefs": {
+    "for": "Preferences pour {{user_name}}",
+    "delay": {
+      "title": "Quand revoir une liste",
+      "one": "après une journée",
+      "two": "après deux jours",
+      "three": "après trois jours",
+      "five": "après cinq jours",
+      "seven": "après une semaine",
+      "ten": "après dix jours",
+      "fourteen": "après deux semaines"
+    },
+    "count": {
+      "title": "Nombre d'expressions à ajouter chaque jour",
+      "ten": "10 expressions par jour",
+      "fifteen": "15 expressions par jour",
+      "twenty-one": "21 expressions par jour"
+    }
+  },
   "error": {
     "404": "404 Introuvable",
     "": "Une erreur est survenue"
@@ -23,6 +43,7 @@
     "guest": {
       "name": "Rester anonyme",
       "user_name": "Invité",
+      "genitive": "Invité",
       "session": {
         "head": "Un cookie permanent est requis",
         "01": "Pour explorer cette application en tant qu'invité anonyme, un cookie permanent sera installé afin de permettre au serveur d'enregistrer votre progression. Il ne sera utilisé à aucune autre fin.",
@@ -94,13 +115,13 @@
       "subtitle": "Un stratégie pour améliorer votre vocabulaire",
       "lede": "Maîtriser une langue étrangère implique une pratique quotidienne régulière. Cette application est conçue pour vous encourager à développer de bonnes habitudes en stimulant votre mémoire avec des mots que vous avez récemment appris.",
       "01": "Chaque jour, <strong>vous devriez consacrer au moins 15 minutes à lire, écouter, visionner ou réviser du contenu dans votre langue cible</strong>. Il est préférable de choisir des ressources qui vous permettent d'apprendre quelque chose de nouveau sur un sujet qui vous intéresse, avec juste ce qu'il faut de difficulté.",
-      "02": "Continuez jusqu'à ce que vous ayez rencontré au moins 21 nouveaux mots ou expressions.",
+      "02": "Continuez jusqu'à ce que vous ayez rencontré au moins 10 nouveaux mots ou expressions. Idéalement, vous pouvez apprendre environ 21 nouvelles expressions par jour. Vous pouvez augmenter votre objectif au fur et à mesure de votre progression.",
       "03": "Ajoutez chaque nouvelle expression à votre liste quotidienne dans cette application, accompagnée d'un indice pour vous rappeler sa signification. Cet indice peut être une traduction dans votre langue maternelle ou une phrase dans votre langue cible qui utilise l'expression.",
       "03_caption": "Ajoutez un indice pour chaque nouvelle expression"
     },
     "h1_daily": {
       "subtitle": "Compléter votre liste quotidienne",
-      "01": "Le nombre de nouvelles expressions saisies s'affiche dans le compteur en bas à droite. Lorsque vous avez ajouté 21 expressions à une liste, ce compteur devient vert et le bouton « Créer une nouvelle liste » devient actif. Cliquez sur « Créer une nouvelle liste » pour enregistrer la liste et la consulter ultérieurement.",
+      "01": "Le nombre de nouvelles expressions saisies s'affiche dans le compteur en bas à droite. Lorsque vous avez ajouté le nombre souhaité expressions à une liste, ce compteur devient vert et le bouton « Créer une nouvelle liste » devient actif. Cliquez sur « Créer une nouvelle liste » pour enregistrer la liste et la consulter ultérieurement.",
       "01_caption": "Cliquez sur « Créer une nouvelle liste » lorsque la liste est prête",
       "02": "Un nouvel élément apparaîtra, vous pourrez donc continuer à ajouter de nouvelles expressions si vous le souhaitez.",
       "02_caption": "Une nouvelle liste avec 21 entrées vides",
@@ -110,15 +131,15 @@
     },
     "h2_reviews": {
       "subtitle": "Élaguer des listes plus anciennes",
-      "01": "Au bout de deux semaines, l'application vous affichera à nouveau cette liste. Si vous avez consacré 15 minutes par jour à vous immerger dans votre langue cible, vous constaterez qu'environ 30 % de ces mots sont désormais enregistrés dans votre mémoire à long terme. Pour les expressions dont vous vous souvenez déjà, cliquez sur le chiffre à gauche de l'expression pour afficher l'icône ✅. L'expression elle-même sera masquée, mais vous verrez toujours l'indice.",
+      "01": "Au bout de trois jours, l'application vous affichera à nouveau cette liste. Si vous avez consacré 15 minutes par jour à vous immerger dans votre langue cible, vous constaterez qu'environ 30 % de ces mots sont désormais enregistrés dans votre mémoire à long terme. Pour les expressions dont vous vous souvenez déjà, cliquez sur le chiffre à gauche de l'expression pour afficher l'icône ✅. L'expression elle-même sera masquée, mais vous verrez toujours l'indice.",
       "01_caption": "Cliquez sur le indice numérique pour afficher l'icône ✅",
       "02": "S'il y a des expressions dont vous ne vous souvenez pas bien, retapez-les et dites-les à voix haute. Si votre indice était une phrase dans votre langue cible, lisez-la en entier. Cela vous rafraîchira la mémoire.",
       "02_caption": "Retapez tous les mots que vous pensez pouvoir oublier",
       "03": "Si le curseur de droite affiche un point blanc, un aperçu de l'expression apparaîtra pendant la saisie. Pour tester votre mémoire, vous pouvez choisir de masquer cet aperçu. Lorsque l'expression est correctement saisie, un cercle vert apparaîtra à droite.",
       "03_caption": "Masquez l'aperçu pendant la saisie pour tester votre mémoire à court terme",
-      "04": "Les expressions que vous saisissez seront à nouveau affichées deux semaines plus tard. Cependant, vous devez choisir de masquer au moins 30 % d'entre elles. (Au moins 30 % des expressions doivent afficher l'icône ✅.) Masquer une expression signifie que vous ne la reverrez plus au bout de deux semaines. Cela signifie que vous dites à votre cerveau : « Je vais me souvenir de cette expression. Je n'ai pas besoin qu'on me la rappelle. »",
-      "05": "Après au moins quatre semaines d'utilisation de l'application, vous verrez également la liste des expressions que vous avez déjà révisées. Les expressions que vous avez choisies de mémoriser apparaîtront verrouillées, avec seulement l'indice affiché. Comme précédemment, pour chaque liste, masquez 30 % des expressions afin de forcer votre cerveau à les mémoriser, et saisissez toutes les autres phrases dont vous n'êtes pas encore certain de vous souvenir.",
-      "05_caption": "Les expressions que vous avez choisi de mémoriser il y a des semaines apparaîtront verrouillées"
+      "04": "Les expressions que vous saisissez seront à nouveau affichées après une autre période d'attente. Cependant, vous devez choisir de masquer au moins 30 % d'entre elles. (Au moins 30 % des expressions doivent afficher l'icône ✅.) Masquer une expression signifie que vous ne la reverrez pas plus tard. Cela signifie que vous dites à votre cerveau : « Je vais me souvenir de cette expression. Je n'ai pas besoin qu'on me la rappelle. »",
+      "05": "Après avoir utilisé l'application pendant quelque temp, vous verrez également la liste des expressions que vous avez déjà révisées. Les expressions que vous avez choisies de mémoriser apparaîtront verrouillées, avec seulement l'indice affiché. Comme précédemment, pour chaque liste, masquez 30 % des expressions afin de forcer votre cerveau à les mémoriser, et saisissez toutes les autres phrases dont vous n'êtes pas encore certain de vous souvenir.",
+      "05_caption": "Les expressions que vous avez choisi de mémoriser il y a quelque temps apparaîtront verrouillées"
     },
     "h3_submit_review": {
       "subtitle": "Après avoir élagué la liste",
@@ -130,14 +151,14 @@
     "h4_days_work": {
       "subtitle": "Finir pour la journée",
       "01": "Chaque jour, vous devriez :",
-      "02": "Complétez au moins une liste de 21 nouvelles expressions (vous pouvez en ajouter d'autres)",
+      "02": "Complétez au moins une liste de nouvelles expressions (vous pouvez en ajouter d'autres)",
       "03": "Élaguer toutes les listes que vous avez créées au cours des semaines précédentes.",
       "04": "Une fois cette opération terminée, une boîte de dialogue « Bien joué ! » devrait s'afficher. (Vous pouvez continuer à ajouter de nouvelles expressions si vous le souhaitez.)",
       "04_caption": "L'application vous félicitera lorsque votre travail de la journée sera terminé"
     },
     "h5_expectations": {
       "subtitle": "À quoi vous pouvez vous attendre",
-      "01": "En listant systématiquement 21 nouvelles expressions chaque jour, vous en aurez rencontré au moins 7 500 d'ici la fin de l'année. Un locuteur avancé d'une langue étrangère utilise activement environ 8 000 mots de base. Un mot de base est le mot principal d'une famille de mots. Par exemple, la famille de mots « vais », « vas », « va », « allons », « allez » et « vont » a pour mot de base « aller »."
+      "01": "En listant systématiquement 21 nouvelles expressions chaque jour, vous en aurez rencontré au moins 7 500 d'ici la fin de l'année. Un locuteur avancé d'une langue étrangère utilise activement environ 8 000 mots de base."
     },
     "h6_tips": {
       "subtitle": "Astuces",
@@ -153,7 +174,9 @@
       "03_caption": "Le bouton « Définir la préférence d'aperçu » en position supérieure",
       "04": "Si vous placez le bouton « Définir la préférence d'aperçu » en bas, l'application masquera les indices pour toutes les expressions que vous avez précédemment mémorisées. Elle masquera également les aperçus de toutes les expressions pendant la saisie.",
       "04_caption": "Le bouton « Définir la préférence d'aperçu » en position inférieure",
-      "05": "Votre préférence sera enregistrée pour vos prochaines visites."
+      "05": "Le menu contextuel en haut à gauche vous permet d'accéder à votre page Profil et de choisir la langue de l'application. Sur la page Profil, vous pouvez définir le nombre d'expressions à ajouter chaque jour et le délai entre les révisions. Au fur et à mesure de votre progrès, augmentez ces valeurs jusqu'à leur maximum : 21 nouvelles expressions par jour, à réviser après deux semaines. Ce sont les paramètres que les utilisateurs de longue date de la méthode  « Gold List » trouvent optimaux pour l'apprentissage.",
+      "05_caption": "Le menu contextuel en haut à gauche",
+      "06": "Votre préférences sera enregistrée pour vos prochaines visites."
     }
   }
 }

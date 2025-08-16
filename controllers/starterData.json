@@ -24,16 +24,16 @@
     { "text": "factory", "hint": "фабрика" }
   ],
   "transport": [
-    { "text": "Car", "hint": "Автомобиль" },
-    { "text": "Bus", "hint": "Автобус" },
-    { "text": "Truck", "hint": "Грузовик" },
-    { "text": "Train", "hint": "Поезд" },
-    { "text": "Plane", "hint": "Самолёт" },
-    { "text": "Bicycle", "hint": "Велосипед" },
-    { "text": "Motorcycle", "hint": "Мотоцикл" },
-    { "text": "Tram", "hint": "Трамвай" },
-    { "text": "Subway", "hint": "Метро" },
-    { "text": "Boat", "hint": "Лодка" }
+    { "text": "car", "hint": "автомобиль" },
+    { "text": "bus", "hint": "автобус" },
+    { "text": "truck", "hint": "грузовик" },
+    { "text": "train", "hint": "поезд" },
+    { "text": "plane", "hint": "самолёт" },
+    { "text": "bicycle", "hint": "велосипед" },
+    { "text": "motorcycle", "hint": "мотоцикл" },
+    { "text": "tram", "hint": "трамвай" },
+    { "text": "subway", "hint": "метро" },
+    { "text": "boat", "hint": "лодка" }
   ],
   "ordinals": [
     { "text": "first",   "hint": "первый" },

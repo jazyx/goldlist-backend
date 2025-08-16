@@ -2,6 +2,26 @@
   "__endonym__": "English",
   "choose-language": "Choose your language",
   "use-method": "Use the Gold List Method",
+  "profile": "Profile for {{user_name}}",
+  "prefs": {
+    "for": "Preferences for {{user_name}}",
+    "delay": {
+      "title": "When to review a list",
+      "one": "after one day",
+      "two": "after two days",
+      "three": "after three days",
+      "five": "after five days",
+      "seven": "after one week",
+      "ten": "after ten days",
+      "fourteen": "after two weeks"
+    },
+    "count": {
+      "title": "Number of expressions to add every day",
+      "ten": "10 expressions a day",
+      "fifteen": "15 expressions a day",
+      "twenty-one": "21 expressions a day"
+    }
+  },
   "error": {
     "404": "404 Not Found",
     "": "Something went wrong"
@@ -23,6 +43,7 @@
     "guest": {
       "name": "Continue as Guest",
       "user_name": "Guest",
+      "genitive": "Guest",
       "session": {
         "head": "Permanent Cookie Required",
         "01": "To explore this app as an anonymous guest, one permanent cookie will be set, to enable the server to record your progress. It will not be used for any other reason.",
@@ -94,13 +115,13 @@
       "subtitle": "A strategy for improving your vocabulary",
       "lede": "Becoming proficient in a foreign language means regular daily practice. This app is designed to encourage you to develop good habits by jogging your memory with words that you recently learned.",
       "01": "Every day, <strong>you should spend at least 15 minutes reading, listening, viewing or reviewing content in your target language</strong>. It's best to choose material where you learn something new about a topic you find interesting, with just the right amount of challenge.",
-      "02": "Continue until you have met at least 21 new words or expressions.",
+      "02": "Continue until you have met at least 10 new words or expressions. Ideally, you can learn around 21 new expressions every day. You can increase your target as you progress.",
       "03": "Add each new expression to your daily list in this app, together with a hint to remind you what it means. This hint could be a translation into your own language, or a sentence in your target language that uses the expression.",
       "03_caption": "Add a hint for each new expression"
     },
     "h1_daily": {
       "subtitle": "Completing your daily list",
-      "01": "The number of new expressions you have entered will be shown in the counter at the bottom right. When you have added 21 expressions to a list, this counter will turn green, and the Add More button will become active. Click on Add More to save the list so that you can review it later.",
+      "01": "The number of new expressions you have entered will be shown in the counter at the bottom right. When you have added your target number of expressions to a list, this counter will turn green, and the Add More button will become active. Click on Add More to save the list so that you can review it later.",
       "01_caption": "Click the Create New List button when the list is full",
       "02": "A new, empty list will appear, so you can continue to add new expressions if you want to.",
       "02_caption": "A new empty list with 21 entries",
@@ -110,15 +131,15 @@
     },
     "h2_reviews": {
       "subtitle": "Reviewing older lists",
-      "01": "After two weeks, the app will show you this list again. If you have been spending 15 minutes every day enjoying your target language, you will find that about 30% of these words are now stored in your long-term memory. For expressions that you already remember, click on the number to the left of expression, to show the ✅ icon. The expression itself will be hidden, but you will still see the hint.",
+      "01": "After three days, the app will show you this list again. If you have been spending 15 minutes every day enjoying your target language, you will find that about 30% of these words are now stored in your long-term memory. For expressions that you already remember, click on the number to the left of expression, to show the ✅ icon. The expression itself will be hidden, but you will still see the hint.",
       "01_caption": "Click on the number slider to show the ✅ icon",
       "02": "If there are any expressions that you do not remember well, type them out again and say them out loud. If your hint was a sentence in your target language, read out the whole sentence. This will help to refresh your memory.",
       "02_caption": "Retype all the words you think you might forget",
       "03": "If the button on the right shows a white dot, then a preview of the expression will appear as you are typing. If you want to test your memory, you can choose to hide the preview. When the expression is correctly typed, a green circle will appear on the right.",
       "03_caption": "Hide the preview while typing to test your short-term memory",
-      "04": "The expressions that you type out will be shown to you again after another two weeks. However, you must choose to hide at least 30% of the expressions. (At least 30% of the expressions should show the ✅ icon.) Hiding an expression means that you will <em>not</em> see it again in after two weeks. It means that you are telling your brain: \"I'm going to remember this expression. I don't need to be reminded of it.\"",
-      "05": "After you have been using the app for at least four weeks, you will also see lists of expressions that you have already reviewed. Expressions that you chose to remember will appear locked, with just the hint showing. As before, for each list, hide 30% of the expressions, to force your brain to remember them, and type out all the other phrases that you are not yet sure of remembering.",
-      "05_caption": "Expressions that you chose to remember weeks ago will appear locked"
+      "04": "The expressions that you type out will be shown to you again after another waiting period. However, you must choose to hide at least 30% of the expressions. (At least 30% of the expressions should show the ✅ icon.) Hiding an expression means that you will <em>not</em> see it again later. It means that you are telling your brain: \"I'm going to remember this expression. I don't need to be reminded of it.\"",
+      "05": "After you have been using the app for a while, you will also see lists of expressions that you have already reviewed. Expressions that you chose to remember will appear locked, with just the hint showing. As before, for each list, hide 30% of the expressions, to force your brain to remember them, and type out all the other phrases that you are not yet sure of remembering.",
+      "05_caption": "Expressions that you chose to remember some time ago will appear locked"
     },
     "h3_submit_review": {
       "subtitle": "Completing a review",
@@ -130,14 +151,14 @@
     "h4_days_work": {
       "subtitle": "Completing your day's work",
       "01": "Every day you should:",
-      "02": "Complete at least one list of 21 new expressions (you can add more)",
+      "02": "Complete at least one list of new expressions (you can add more)",
       "03": "Review all the lists that you created in past weeks.",
       "04": "When you have done this, you should see a \"Congratulations!\" dialog. (You can continue to add more new expressions if you want to.)",
       "04_caption": "The app will congratulate you when your day's work is done"
     },
     "h5_expectations": {
       "subtitle": "Expectations",
-      "01": "Consistently listing 21 new expressions every day means that you will have met at least 7500 new expressions by the end of the year. An advanced speaker of a foreign language actively uses about 8000 base words. A base word is the main word in a word family. For example, the family of words \"do\", \"did\", \"done\", \"doing\" has \"do\" as the base word."
+      "01": "Consistently listing 21 new expressions every day means that you will have met at least 7500 new expressions by the end of the year. An advanced speaker of a foreign language actively uses about 8000 base words."
     },
     "h6_tips": {
       "subtitle": "Tips",
@@ -153,7 +174,9 @@
       "03_caption": "The Set Preview Preference button in the top position",
       "04": "If you set the \"Set preview preference\" button to its bottom position, the app will hide the hints for all the expressions that you previously committed to remembering. It will also hide previews of all expressions while you are typing.",
       "04_caption": "The Set Preview Preference button in the bottom position",
-      "05": "Your preference will be saved for future visits."
+      "05": "The pop-up menu at the top left allows you to visit your Profile page and choose the language for the app. At the Profile page, you can set your target for the number of expressions to add every day, and the length of the delay between reviews. As you progress, you should increase these values to their maximum: 21 new expressions a day, to be reviewed after two weeks. These are the settings that long-time users of the Gold List Method find optimal for learning.",
+      "05_caption": "The pop-up menu at the top left",
+      "06": "Your preferences will be saved for future visits."
     }
   }
 }
