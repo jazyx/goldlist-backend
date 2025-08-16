@@ -7,8 +7,8 @@
 
 
 const { List, Phrase } = require('../database')
-const { ACTIVE_AGE, DELAY, REMAIN } = require('../constants')
-const { addList } = require('./addList')
+const { ACTIVE_AGE } = require('../constants')
+const { addNewList } = require('./addList')
 
 
 // A User record with the appropriate user_name|email+password
@@ -67,7 +67,7 @@ function collectDataFor(user) {
       const json = lists => resolve({ user, lists })
       const res = { status: () => {} , json }
 
-      addList(req, res)
+      addNewList(req, res)
     })
   }
 
@@ -78,7 +78,7 @@ function collectDataFor(user) {
    */
   function getActiveListPhrases({ user, lists }) {
     if (lists.fail) {
-      // addList failed te create a new empty list for this user
+      // addNewList failed te create a new empty list for this user
       return Promise.reject(lists.fail)
     }
 

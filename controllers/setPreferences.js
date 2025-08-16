@@ -9,6 +9,7 @@
 
 const { mongoose, User, List, Phrase } = require('../database')
 const { addNewList } = require('./addList')
+const { collectDataFor } = require('./collectDataFor')
 
 
 function savePreferences(req, res) {
@@ -22,6 +23,7 @@ function savePreferences(req, res) {
   )
     .then(confirmPreferences)
     .then(checkForChangedPhraseCount)
+    .then(checkForChangedDaysDelay)
     .catch(treatError)
 
 
@@ -85,7 +87,6 @@ function savePreferences(req, res) {
   }
     
 
-
   function countNonEmptyPhrases(data) {
     // data = {
     //   "user_id": "68a001b34044bf6788545fc4",
@@ -116,7 +117,6 @@ function savePreferences(req, res) {
       .catch(treatError)
   }
     
-
 
   function updateTotalAndRemain(data) {
     // data = {
@@ -229,6 +229,52 @@ function savePreferences(req, res) {
     }    
   }
   
+
+  function checkForChangedDaysDelay(data) {
+    // data = { 
+    //   _id, 
+    //   lists, // array or integer
+    //   [index,]
+    //   preferences: {key: value, ...} // may contain phraseCount
+    // }
+
+    const { _id, preferences } = data
+    const { daysDelay } = preferences
+    if (!daysDelay) {
+      return Promise.resolve(data)
+    }
+
+    return User.findById(_id)
+      .then(collectDataFor)
+      .then(collateData)
+
+    function collateData(userData) {
+      // {
+      //   "user": { details },
+      //   "lists": [
+      //     {
+      //       "_id": "68a07e65c500198b372cdca4",
+      //       "index": 11,
+      //       "created": "2025-08-16T12:49:41.934Z",
+      //       "remain": 10,
+      //       "total": 10,
+      //       "phrases": [ phrase objects ]
+      //     }
+      //   ],
+      //   "redos": [ as lists, but may be empty ]
+      // }
+      delete userData.user // not required
+
+      // Ensure that List.index or User.lists is available
+      if (typeof (data.lists) === "number") {
+        data.index = data.lists
+      }
+
+      data = { ...data, ...userData }
+
+      return Promise.resolve(data)
+    }
+  }
 
 
   function treatError(info) {
