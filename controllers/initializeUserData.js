@@ -3,38 +3,44 @@
  *
  * When a user connects to the database for the first time, make:
  * + A User record
- * + 6 List records
- *   5.   Active list    (20/21 animals)
- *   4.   Review 21->14  (numbers, in digits)
- *   3.   Review 14->10  (colours)
- *   2.   Review 10->7   (times)
- *   0,1. 2x Review 7, to become a repeat list (verbs, food)
- * + 125 Phrase records
+ * + 12 List records, some of which already have words retained
  *
- *  { "animals": 0,
- *    "numbers": 14,
- *    "colours": 28,
- *    "times":   42,
- *    "food":    43,
- *    "verbs":   44
+ *  { "animals":   0,
+ *    "building":  1,
+ *    "transport": 2,
+ *    "ordinals":  3,
+ *    "kitchen":   4,
+ *    "household": 5,
+ *    "verbs":     6,
+ *    "food":      7,
+ *    "countries": 8,
+ *    "colours":   9,
+ *    "days":      10,
+ *    "cardinals": 11
  *  }
  * 
- * initializeUserData will always create default lists with 21
- * entries, to encourage users to work well.
+ * initializeUserData will always create default lists with 10
+ * to simplify the demo.
  */
 
 
 const { List, Phrase } = require('../database')
-const dummyData = require('./dummyData.json')
+const dummyData = require('./starterData.json')
 const { DELAY, DAYS } = require('../constants')
 const { formatUserData } = require('./formatUserData')
-const backDates = { // oldest to newest, so index is correct
-  "verbs":   44,
-  "food":    43,
-  "times":   42,
-  "colours": 28,
-  "numbers": 14,
-  "animals":  0
+const backDates = {  // oldest to newest, so index is correct
+  "cardinals": 11,
+  "days":      10,
+  "colours":   9,
+  "countries": 8,
+  "food":      7,
+  "verbs":     6,
+  "household": 5,
+  "kitchen":   4,
+  "ordinals":  3,
+  "transport": 2,
+  "buildings": 1,
+  "animals":   0
 }
 
 
@@ -53,6 +59,8 @@ function initializeUserData(user) {
     const ago = (DELAY * ( reviews - 1 )) * DAYS
     const retained = new Date(now - ago)
 
+    console.log("key:", key, ", index:", index)
+
     // ... along with all the phrases for the list
     return new List(data)
       .save()
@@ -60,7 +68,8 @@ function initializeUserData(user) {
         list,
         created,
         retained,
-        phrases
+        phrases,
+        name: key
       }))
       .then(list => Promise.resolve(list))
       .catch(error => Promise.reject(error))
@@ -79,6 +88,7 @@ function makePhrases({
   created,
   retained,
   phrases,
+  name
 }) {
   const { _id: list_id } = list
   const { _id, user_id, index, reviews, remain, total } = list
@@ -89,7 +99,8 @@ function makePhrases({
     created,
     reviews,
     remain,
-    total
+    total,
+    name
   }
 
   const promises = phrases.map(( phrase, key ) => {
@@ -124,13 +135,13 @@ function getPhrasesData(user_id, key, now, backdate, index) {
     return sum
   }, 0)
 
-  const reviews = (remain > 20)
+  const reviews = (remain > 9)
     ? 1
-    : (remain > 14)
+    : (remain > 6)
       ? 2
-      : (remain > 9)
+      : (remain > 4)
         ? 3
-        : (remain > 6)
+        : (remain > 2)
           ? 4
           : 5
 
@@ -141,7 +152,8 @@ function getPhrasesData(user_id, key, now, backdate, index) {
     index,
     remain,
     reviews,
-    created
+    created,
+    name: key
   }
 
   return { phrases, data }

@@ -37,15 +37,6 @@ if (is_dev) {
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
   }
-
-  const swap = (key, value) => {
-    if (value instanceof RegExp) {
-      return value.toString()
-    }
-    
-    return value
-  }
-  console.log("CORS options", JSON.stringify(options, swap, '  '));
   
   server.use(require('cors')(options))
 }

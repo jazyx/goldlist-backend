@@ -5,6 +5,9 @@
  */
 
 
+const { DAYS, DELAY } = require('../constants')
+
+
 function formatUserData({ user, redos }) {
   // Get highest index in redos
   const max = redos.reduce(( max, redo ) => {
@@ -31,7 +34,7 @@ function formatUserData({ user, redos }) {
 
     const active = redos.splice(activeIndex, 1)
     // The first list and only list in lists should have only
-    // 20 non-empty phrases, so set its `reviews` to 0, if this
+    // 1 non-empty phrase, so set its `reviews` to 0, if this
     // is in fact the case. This will tell the front end to treat
     // this list as an Add item.
     const hasEmpty = active.map( list => {
@@ -57,8 +60,13 @@ function formatUserData({ user, redos }) {
       phraseCount
     } = user
 
-    // Ignore redos with less than 8 phrases
-    redos = redos.filter( list => list.remain > 7 )
+    // Filter redos where .created is less than .reviews days ago
+    // and .remain is greater than .total / 3
+    const now = new Date().getTime()
+    redos = redos.filter(({ created, reviews, name, remain, total }) => (
+        (now - created.getTime()) > (reviews * DAYS * DELAY )
+      && (remain > total / 3)
+    ))
 
     const data = {
       user: {

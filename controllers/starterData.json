@@ -47,18 +47,6 @@
     { "text": "ninth",   "hint": "девятый" },
     { "text": "tenth",   "hint": "десятый" }
   ],
-  "household": [
-    { "text": "door", "hint": "дверь", "retained": true  },
-    { "text": "window", "hint": "окно", "retained": true  },
-    { "text": "sofa", "hint": "диван" },
-    { "text": "armchair", "hint": "кресло" },
-    { "text": "clock", "hint": "часы" },
-    { "text": "mirror", "hint": "зеркало" },
-    { "text": "lamp", "hint": "лампа", "retained": true  },
-    { "text": "carpet", "hint": "ковер" },
-    { "text": "bed", "hint": "кровать" },
-    { "text": "wardrobe", "hint": "гардероб" }
-  ],
   "kitchen": [
     { "text": "table", "hint": "стол", "retained": true  },
     { "text": "chair", "hint": "стул", "retained": true  },
@@ -70,6 +58,18 @@
     { "text": "shelf", "hint": "полка" },
     { "text": "bucket", "hint": "ведро" },
     { "text": "broom", "hint": "метла" }
+  ],
+  "household": [
+    { "text": "door", "hint": "дверь", "retained": true  },
+    { "text": "window", "hint": "окно", "retained": true  },
+    { "text": "sofa", "hint": "диван" },
+    { "text": "armchair", "hint": "кресло" },
+    { "text": "clock", "hint": "часы" },
+    { "text": "mirror", "hint": "зеркало" },
+    { "text": "lamp", "hint": "лампа", "retained": true  },
+    { "text": "carpet", "hint": "ковер" },
+    { "text": "bed", "hint": "кровать" },
+    { "text": "wardrobe", "hint": "гардероб" }
   ],
   "verbs": [
     { "text": "go",    "hint": "идти", "retained": true },
