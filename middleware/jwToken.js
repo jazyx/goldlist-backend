@@ -43,7 +43,7 @@ const checkPass = (req, res, next) => {
   const path = req.path
   // console.log("checkPass path:", path)
 
-  const pathRegex = /\/(add|rev|about|i18n)(\/?|(\/-?[0-9-]))?$/
+  const pathRegex = /\/(add|rev|about|i18n)(\/?|(\/[0-9-]+))?$/
   const notAPI = pathRegex.test(path)
   // console.log("notAPI:", notAPI, path)
 
