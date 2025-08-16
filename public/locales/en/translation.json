@@ -173,10 +173,13 @@
       "03": "If you set the \"Set preview preference\" button to its top position, the app will reveal all the expressions that you previously committed to remembering. It will also show previews of all expressions while you are typing.",
       "03_caption": "The Set Preview Preference button in the top position",
       "04": "If you set the \"Set preview preference\" button to its bottom position, the app will hide the hints for all the expressions that you previously committed to remembering. It will also hide previews of all expressions while you are typing.",
-      "04_caption": "The Set Preview Preference button in the bottom position",
-      "05": "The pop-up menu at the top left allows you to visit your Profile page and choose the language for the app. At the Profile page, you can set your target for the number of expressions to add every day, and the length of the delay between reviews. As you progress, you should increase these values to their maximum: 21 new expressions a day, to be reviewed after two weeks. These are the settings that long-time users of the Gold List Method find optimal for learning.",
-      "05_caption": "The pop-up menu at the top left",
-      "06": "Your preferences will be saved for future visits."
+      "04_caption": "The Set Preview Preference button in the bottom position"
+    },
+    "h8_preferences": {
+      "subtitle": "Other Preferences",
+      "01": "The pop-up menu at the top left allows you to visit your Profile page and choose the language for the app. At the Profile page, you can set your target for the number of expressions to add every day, and the length of the delay between reviews. As you progress, you should increase these values to their maximum: 21 new expressions a day, to be reviewed after two weeks. These are the settings that long-time users of the Gold List Method find optimal for learning.",
+      "01_caption": "The pop-up menu at the top left",
+      "02": "Your preferences will be saved for future visits."
     }
   }
 }

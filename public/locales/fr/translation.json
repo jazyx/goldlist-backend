@@ -173,10 +173,13 @@
       "03": "Si vous placez le bouton « Définir la préférence d'aperçu » en position haute, l'application affichera toutes les expressions que vous avez précédemment mémorisées. Elle affichera également un aperçu de toutes les expressions pendant la saisie.",
       "03_caption": "Le bouton « Définir la préférence d'aperçu » en position supérieure",
       "04": "Si vous placez le bouton « Définir la préférence d'aperçu » en bas, l'application masquera les indices pour toutes les expressions que vous avez précédemment mémorisées. Elle masquera également les aperçus de toutes les expressions pendant la saisie.",
-      "04_caption": "Le bouton « Définir la préférence d'aperçu » en position inférieure",
-      "05": "Le menu contextuel en haut à gauche vous permet d'accéder à votre page Profil et de choisir la langue de l'application. Sur la page Profil, vous pouvez définir le nombre d'expressions à ajouter chaque jour et le délai entre les révisions. Au fur et à mesure de votre progrès, augmentez ces valeurs jusqu'à leur maximum : 21 nouvelles expressions par jour, à réviser après deux semaines. Ce sont les paramètres que les utilisateurs de longue date de la méthode  « Gold List » trouvent optimaux pour l'apprentissage.",
-      "05_caption": "Le menu contextuel en haut à gauche",
-      "06": "Votre préférences sera enregistrée pour vos prochaines visites."
+      "04_caption": "Le bouton « Définir la préférence d'aperçu » en position inférieure"
+    },
+    "h8_preferences": {
+      "subtitle": "D'autres préférences",
+      "01": "Le menu contextuel en haut à gauche vous permet d'accéder à votre page Profil et de choisir la langue de l'application. Sur la page Profil, vous pouvez définir le nombre d'expressions à ajouter chaque jour et le délai entre les révisions. Au fur et à mesure de votre progrès, augmentez ces valeurs jusqu'à leur maximum : 21 nouvelles expressions par jour, à réviser après deux semaines. Ce sont les paramètres que les utilisateurs de longue date de la méthode  « Gold List » trouvent optimaux pour l'apprentissage.",
+      "01_caption": "Le menu contextuel en haut à gauche",
+      "02": "Votre préférences sera enregistrée pour vos prochaines visites."
     }
   }
 }
