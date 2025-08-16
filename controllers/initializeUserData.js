@@ -25,7 +25,7 @@
 
 
 const { List, Phrase } = require('../database')
-const dummyData = require('./starterData.json')
+const dummyData = require('../data/starterData.json')
 const { DELAY, DAYS } = require('../constants')
 const { formatUserData } = require('./formatUserData')
 const backDates = {  // oldest to newest, so index is correct

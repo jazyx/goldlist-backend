@@ -105,8 +105,8 @@
     "title": "Félicitations !",
     "completed": "Vous avez complété {{count}} nouvelles listes d'expressions",
     "completed1": "Vous avez complété une nouvelle liste d'expressions",
-    "reviewed": " et élagué {{count}} listes plus anciennes",
-    "reviewed1": " et élagué une liste plus ancienne",
+    "reviewed": " et élagué {{count}} listes plus anciennes.",
+    "reviewed1": " et élagué une liste plus ancienne.",
     "welldone": "Bien joué !"
   },
   "about": {

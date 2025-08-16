@@ -103,10 +103,10 @@
   "remember1": "You have decided to remember this expression:",
   "congratulations": {
     "title": "Congratulations!",
-    "completed": "You have completed {{count}} new phrase lists",
+    "completed": "You have completed {{count}} new lists",
     "completed1": "You have completed a new phrase list",
-    "reviewed": " and reviewed {{count}} older lists",
-    "reviewed1": " and reviewed an older list",
+    "reviewed": " and reviewed {{count}} older lists.",
+    "reviewed1": " and reviewed an older list.",
     "welldone": "Well Done!"
   },
   "about": {

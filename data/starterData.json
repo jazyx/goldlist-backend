@@ -24,16 +24,16 @@
     { "text": "factory", "hint": "фабрика" }
   ],
   "transport": [
-    { "text": "car", "hint": "автомобиль" },
-    { "text": "bus", "hint": "автобус" },
-    { "text": "truck", "hint": "грузовик" },
-    { "text": "train", "hint": "поезд" },
-    { "text": "plane", "hint": "самолёт" },
-    { "text": "bicycle", "hint": "велосипед" },
-    { "text": "motorcycle", "hint": "мотоцикл" },
-    { "text": "tram", "hint": "трамвай" },
-    { "text": "subway", "hint": "метро" },
-    { "text": "boat", "hint": "лодка" }
+    { "text": "Car", "hint": "Автомобиль" },
+    { "text": "Bus", "hint": "Автобус" },
+    { "text": "Truck", "hint": "Грузовик" },
+    { "text": "Train", "hint": "Поезд" },
+    { "text": "Plane", "hint": "Самолёт" },
+    { "text": "Bicycle", "hint": "Велосипед" },
+    { "text": "Motorcycle", "hint": "Мотоцикл" },
+    { "text": "Tram", "hint": "Трамвай" },
+    { "text": "Subway", "hint": "Метро" },
+    { "text": "Boat", "hint": "Лодка" }
   ],
   "ordinals": [
     { "text": "first",   "hint": "первый" },
@@ -47,18 +47,6 @@
     { "text": "ninth",   "hint": "девятый" },
     { "text": "tenth",   "hint": "десятый" }
   ],
-  "kitchen": [
-    { "text": "table", "hint": "стол", "retained": true  },
-    { "text": "chair", "hint": "стул", "retained": true  },
-    { "text": "plate", "hint": "тарелка" },
-    { "text": "spoon", "hint": "ложка" },
-    { "text": "fork", "hint": "вилка" },
-    { "text": "knife", "hint": "нож" },
-    { "text": "cup", "hint": "чашка", "retained": true  },
-    { "text": "shelf", "hint": "полка" },
-    { "text": "bucket", "hint": "ведро" },
-    { "text": "broom", "hint": "метла" }
-  ],
   "household": [
     { "text": "door", "hint": "дверь", "retained": true  },
     { "text": "window", "hint": "окно", "retained": true  },
@@ -70,6 +58,18 @@
     { "text": "carpet", "hint": "ковер" },
     { "text": "bed", "hint": "кровать" },
     { "text": "wardrobe", "hint": "гардероб" }
+  ],
+  "kitchen": [
+    { "text": "table", "hint": "стол", "retained": true  },
+    { "text": "chair", "hint": "стул", "retained": true  },
+    { "text": "plate", "hint": "тарелка" },
+    { "text": "spoon", "hint": "ложка" },
+    { "text": "fork", "hint": "вилка" },
+    { "text": "knife", "hint": "нож" },
+    { "text": "cup", "hint": "чашка", "retained": true  },
+    { "text": "shelf", "hint": "полка" },
+    { "text": "bucket", "hint": "ведро" },
+    { "text": "broom", "hint": "метла" }
   ],
   "verbs": [
     { "text": "go",    "hint": "идти", "retained": true },
