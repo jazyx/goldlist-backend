@@ -18,6 +18,9 @@
  *    "food":    43,
  *    "verbs":   44
  *  }
+ * 
+ * initializeUserData will always create default lists with 21
+ * entries, to encourage users to work well.
  */
 
 
@@ -78,8 +81,16 @@ function makePhrases({
   phrases,
 }) {
   const { _id: list_id } = list
-  const { _id, user_id, index, reviews, remain } = list
-  const info = { _id, user_id, index, created, reviews, remain }
+  const { _id, user_id, index, reviews, remain, total } = list
+  const info = {
+    _id,
+    user_id,
+    index,
+    created,
+    reviews,
+    remain,
+    total
+  }
 
   const promises = phrases.map(( phrase, key ) => {
     // { "text": "go", "hint": "идти", "retained": true }

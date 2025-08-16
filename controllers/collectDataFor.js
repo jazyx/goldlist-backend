@@ -32,7 +32,7 @@ function collectDataFor(user) {
 
   function getActiveLists(user) {
     const { _id: user_id, lists: index } = user
-    const selection = ["index", "created", "remain" ]
+    const selection = ["index", "created", "remain", "total" ]
     const recently = new Date(Date.now() - ACTIVE_AGE);
     const query = {
       user_id,
@@ -85,7 +85,7 @@ function collectDataFor(user) {
     }
 
     const promises = lists.map( list => {
-      const { _id, index, created, remain } = list
+      const { _id, index, created, remain, total } = list
       const selection = [ "text", "hint" ]
 
       return new Promise(( resolve, reject ) => {
@@ -102,6 +102,7 @@ function collectDataFor(user) {
             index,
             created,
             remain,
+            total,
             phrases
           }
           resolve(list)
