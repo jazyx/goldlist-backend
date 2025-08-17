@@ -41,27 +41,25 @@ const checkPass = (req, res, next) => {
   const pass = req.session?.pass
   const referer = req.headers.referer
   const path = req.path
-  // console.log("checkPass path:", path)
 
-  const pathRegex = /\/(add|rev|about|i18n)(\/?|(\/[0-9-]+))?$/
-  const notAPI = pathRegex.test(path)
-  // console.log("notAPI:", notAPI, path)
+  const apiRegex = /\/checkCookie|guest|register|login|savePhrase|addList|submitList|submitReview|setPreference/
+  const isAPI = apiRegex.test(path)
 
   let status = 0
   let message = ""
 
-  if (is_dev || !pass || notAPI) {
-    if (is_dev && referer) {
-      console.log(`🤚 DEV PASS ${req.path} REQUEST FOR ${referer}`)
+  if (!isAPI || !pass) {
+    // Ignore API request: serve home page + cookie instead
+    return res.redirect("/")
 
-    } else if (notAPI || !pass) {
-      // Ignore API request: serve home page + cookie instead
-      return res.redirect("/")
-    }
-
+  } else if (is_dev && referer) {
+    // Allow API calls from the dev frontend on a different port
+    console.log(`🤚 DEV PASS ${req.path} REQUEST FOR ${referer}`)
     proceed()
 
   } else {
+    // Check pass in production mode before allowing API calls, 
+    // and also in dev mode if Express is hosting the frontend.
     jwt.verify(pass, JWT_SECRET, treatPass)
   }
 

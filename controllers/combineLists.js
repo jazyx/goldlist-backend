@@ -15,19 +15,21 @@
 const { mongoose, User, List, Phrase } = require('../database')
 
 
-function combineLists(user_id) {
+function combineLists(user_id, min) {
+  // Find lists that have between 1 and min non-retained phrases
   const query = {
     user_id,
-    remain: { $gt: 0, $lt: 8 }
+    remain: { $gt: 0, $lte: min }
   }
 
   return List.find(query)
-    .then(checkKnottyPhrases)
+    .then(lists => checkKnottyPhrases(lists, min))
     .then(treatSuccess)
     .catch(treatError)
 
 
-  function checkKnottyPhrases(lists) {
+  function checkKnottyPhrases(lists, min) {
+    // Find total number of non-retained phrases in these lists
     const list_ids = lists.map( list => list._id )
     const query = {
       lists: { $in: list_ids },
@@ -35,16 +37,17 @@ function combineLists(user_id) {
     }
 
     return Phrase.find(query)
-      .then(phrases => countPhrases({ lists, phrases }))
+      .then(phrases => countPhrases({ lists, phrases, min }))
       .catch(error => Promise.reject(error))
   }
 
 
-  function countPhrases({ lists, phrases }) {
+  function countPhrases({ lists, phrases, min }) {
     const remain = phrases.length
 
-    if ( remain > 14 ) {
+    if ( remain > min * 2 ) {
       return getUserKnots({ lists, phrases})
+
     } else {
       return Promise.reject(
         `Only ${remain} knotty phrase${remain === 1 ? "" : "s"}`
@@ -68,11 +71,13 @@ function combineLists(user_id) {
 
   function createNewList({ user, lists, phrases }) {
     const { knots } = user
+    const total = phrases.length
 
     const data = {
       user_id,
       index: knots,
-      remain: phrases.length,
+      total,
+      remain: total,
       submitted: true
     }
 

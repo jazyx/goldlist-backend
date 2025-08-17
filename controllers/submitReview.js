@@ -62,30 +62,35 @@ function completeReview (req, res, next) {
       }
 
       List.findByIdAndUpdate( _id, update, { new: true } )
-        .then(result => {
-          const { _id, user_id, index, reviews, remain } = result
-          const list = { _id, user_id, index, reviews, remain }
-
-          resolve(list)
-        })
+        .then(resolve)
         .catch(reject)
     })
   }
 
 
   function combineListsIfNeeded(list) {
-    const { remain, user_id } = list
+    const { remain, user_id, total } = list
+    const min = Math.floor(total / 3) // 21—>7; 15—>5; 10—>3
 
-    if (Number(remain) && remain < 8) {
-      combineLists(user_id)
-        .then(list => console.log(
-          "New combined list",
-          JSON.stringify(list, null, '  '))
-        )
+    // No recombination needed if remain is 0
+
+    if (Number(remain) && remain <= min) {
+      combineLists(user_id, min)
+        .then(logNewList)
         .catch(message => console.log(message))
     }
-    // Always resolve, even if no lists were combined
-    return Promise.resolve(list)
+
+    // Always resolve, even if no lists are simultaneously being
+    // combined. The frontend will simply remove the list with the
+    // given _id from repos
+    return Promise.resolve({ _id: list._id })
+  }
+
+
+  function logNewList(list) {
+    console.log("New combined list",
+          JSON.stringify(list, null, '  '))
+    // return list
   }
 
 

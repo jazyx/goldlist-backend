@@ -163,7 +163,8 @@ function collectDataFor(user) {
       index:   1,
       created: 1,
       reviews: 1,
-      remain:  1
+      remain:  1,
+      total:   1
     }
     const $sort = { "created": -1 } // newest to oldest
     const $limit = 3
