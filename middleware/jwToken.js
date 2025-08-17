@@ -42,13 +42,13 @@ const checkPass = (req, res, next) => {
   const referer = req.headers.referer
   const path = req.path
 
-  const apiRegex = /\/checkCookie|guest|register|login|savePhrase|addList|submitList|submitReview|setPreference/
+  const apiRegex = /\/checkCookie|guest|register|login|savePhrase|addList|submitList|submitReview|setPreferences/
   const isAPI = apiRegex.test(path)
 
   let status = 0
   let message = ""
 
-  if (!isAPI || !pass) {
+  if (!isAPI || (!is_dev && !pass)) {
     // Ignore API request: serve home page + cookie instead
     return res.redirect("/")
 
