@@ -1,67 +1,23 @@
-# Vite-React-Express #
+# GOLDLIST METHOD BACKEND #
 
-Proof-of-concept of a Vite React site served by an Express Backend.
+Express server to host a React frontend [Repo](git@github.com:jazyx/goldlist-frontend.git) for recording and reviewing new words and expressions in a foreign language.
 
-This `backend/` directory contains the following files:
+[Overview of the paper-and-pen Goldlist method](https://www.open.edu/openlearn/languages/learning-languages/the-goldlist-method)
 
-```md
-├── This `README.md` file
-│
-├── LICENSE
-│
-├── .env               (which you should create yourself)
-├── .git
-├── .gitignore
-│
-├── node_modules/      (will be created when you run `npm i`)
-│
-├── controllers
-│   ├── index.js
-│   └── ping.js
-│
-├── middleware
-│   ├── index.js
-│   ├── jwToken.js
-│   └── serveCookie.js
-│
-├── public             (populated by `npm run publish`)
-│   ├── assets
-│   │   ├── index-CqwqLku9.js
-│   │   └── index-DJaG3xuZ.css
-│   ├── index.html
-│   └── vite.svg
-│
-├── router.js
-├── server.js
-│
-├── package-lock.json
-└── package.json
-```
+The app allows you to enter new expressions that you have met in the language you are learning, together with a hint about their meaning. These expressions will be shown to you a few days later, and you will be encouraged to type out those that you are not yet ready to remember, and to select at least 30% of the words to retain in your long-term memory.
 
-## HOUSEKEEPING
+## Features ##
 
-**During development, for simplicity, I got you to save all your scripts at the root of the `backend/` directory. Here, I have done some housekeeping. For tidiness, I have moved them into separate sub-directories. I have also used `index.js` files at the root of each sub-directory to simplify access to functions in one script from another.**
-
-## 
-
-During development, this `backend/` folder should be inside a parent folder containing the following contents:
-
-```md
-.
-├── backend/
-├── frontend/
-├── package.json
-└── publish.sh
-```
-
-You will create your React frontend in the `frontend/` folder, and then run `npm run publish` to copy the static files produces by `vite build` into the `backend/public/` folder.
-
-When you deploy your site, you will need to:
-1. Create a Git repository in this `backend/` directory
-2. Ensure that the `public/` folder contains the latest files
-3. Commit your changes
-4. Push to a remote repository on GitHub
-5. Create a Web Service on Render.com
-6. Connect your Web Service to your GitHub repository
-7. Enter your custom `.env` variables
-8. Start the Web Service.
+1. All features are available as a Guest user
+2. You can register a username to use the app on different devices or allow different users to connect from the same device
+3. Twelve pre-defined lists of simple English vocabulary are provided to help understand how the method words
+4. When you have chosen to retain all but the last 33% of the expressions in a list, the remaining unretained words will be scheduled for recombination into a new list.
+5. You can choose:
+   1. One of three languages for the UI: English, French or Russian
+   2. How many words to add to complete each list
+   3. How many days will pass before you are asked to review a list
+   (The last two preferences are saved across devices.)
+6. You can show or hide the hints and typing preview for all expressions, or on an expression-by-expression basis
+7. If you choose to hide hints and typing preview, you can press Backspace while typing a review expression to show the full expression and its hint momentarily
+8. Optional characters used to indicate word stress are ignored when retyping expressions
+9. You can press Shift+Enter to create multiline hints
